@@ -12,3 +12,11 @@ Tsu :snowflake: is cloud native, open source blogging software designed with ext
 - Minimal UI, emphasis on back-end.
 - Production ready and thoroughly documented.
 - Platform and tool agnostic in final state..
+
+# Dev Commands
+- `tsu.bat publish posts\vocab-app-launch.tsu` to publish post
+- `tsu.bat deploy` after updting template/code
+
+# Prod Commands
+- `tsu.bat -s prod publish posts\vocab-app-launch.tsu` to publish post
+- `tsu.bat -s prod deploy` after updting template/code
