@@ -2,14 +2,14 @@ a.color,
 .content a,
 .nav-header a,
 .post-wrapper .view-post  {
-  color: #000000;
+  color: #6fb536;
 }
 
 a.color:hover,
 .content a:hover,
 .nav-header a:hover,
 .post-wrapper .view-post:hover {
-  color: #5E5D5D;
+  color: #9bcf71;
 }
 
 nav.menu.columns:not(:last-child) {
