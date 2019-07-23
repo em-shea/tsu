@@ -4,7 +4,7 @@ title: Launching daily Chinese vocab
 category: Projects
 status: published
 preview: >
-  [Haohaotiantian.com](https://haohaotiantian.com/) is live! 
+  Haohaotiantian.com is live! 
   Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. Here I'll walk through a bit about the design and the process of building it.
 ---
 
@@ -18,19 +18,19 @@ Here I'll walk through a bit about the design and the process of building it. Th
 
 The source code is located [here](https://github.com/em-shea/vocab).
 
-# Backend:
+###### Backend
 
 The core functionality of the app is to generate a random 'word of the day' from the vocab lists for each of the six HSK levels, and then send that word to subscribers of that level. The complete list of vocab words for all six levels is stored in a CSV in S3. A daily CloudWatch event rule is scheduled to trigger the SendDailyCampaign Lambda function. The SendDailyCampaign function calls the VocabRandomEntry function for level 1. VocabRandom Entry reads the vocab CSV and passes back a random level 1 word. SendDailyCampaign then creates and sends a SendGrid email campaign to subscribers for level 1, and loops through the rest of the levels. If the campaign for any level fails to create or send, a failure notification is sent to an SNS topic to alert the app owner.
 
-# Frontend:
+###### Frontend
 
-To allow users to subscribe, the web page has a level selection and email subscribe input form that calls my API Gateway endpoint. The endpoint passes the users level and email to the Subscribe Lambda function, which calls SendGrid's API to add the contact to the given level subscriber list, as well as sending an SNS notification letting the app owner know there is a new subscriber. This invokes the HappyDance function 😄. 
+To allow users to subscribe, the web page has a level selection and email subscribe input form that calls my API Gateway endpoint. The endpoint passes the users level and email to the Subscribe Lambda function, which calls SendGrid's API to add the contact to the given level subscriber list, invokes the NewUserConfirmation function to send a confirmation email through SendGrid, and sends an SNS notification letting the app owner know there is a new subscriber. This invokes the HappyDance function 😄. 
 
 To help users assess their own level, I created an API endpoint that returns five random words for each HSK level. The web page loads these words when it is loaded and displays them to the user as preview words. 
 
 The user interface static content is hosted in S3 and distributed through CloudFront. 
 
-# Architecture:
+###### Architecture
 
 ![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
 
@@ -42,12 +42,16 @@ Opening the app up to the public required a bit of backend refactoring and build
 
 I got stuck for a while on how to make my email service fit into SendGrid's marketing or transactional model - at first I thought it should be transactional because I was adding user personalization by sending users the vocab word for the level they signed up for, but I also wanted to make use of SendGrid's marketing contact lists and marketing unsubscribe preferences.
 
-Ultimately, I decided on marketing style emails. I didn't end up using SendGrid's email templates, since you would need to include a previously created template ID in SendGrid's create API call and you can't add personalization (ie, the daily vocab word) to an existing template. I copied over my template HTML, using handlebars to placehold for the daily vocab word, and packaged the template file with my SendDailyCampaign Lambda function code. In this way, the Lambda function reads the template HTML file, swaps in the daily vocab word, and creates a campaign using the email HTML as opposed to a template ID.
+Ultimately, I decided on marketing style emails for the daily vocab emails. I didn't end up using SendGrid's email templates, since you would need to include a previously created template ID in SendGrid's create API call and you can't add personalization (ie, the daily vocab word) to an existing template. I copied over my template HTML, using handlebars to placehold for the daily vocab word, and packaged the template file with my SendDailyCampaign Lambda function code. In this way, the Lambda function reads the template HTML file, swaps in the daily vocab word, and creates a campaign using the email HTML as opposed to a template ID. 
 
-The frontend user interface is fairly simple and straightforward. Nonetheless, it took me some time, being the first time I'd written Javascript, called my own APIs, or worked with Bootstrap. Whew! I have learned a crazy amount through this project. I built on new AWS services, used new tooling (Circle CI) and SaaS (SendGrid), and gained more general coding experience.
+I use transactional emails and a SendGrid template ID with personalization handlebars for the new user confirmation email.
+
+The frontend user interface is fairly simple and straightforward. Nonetheless, it took me some time, being the first time I'd written Javascript, called my own APIs, or worked with Bootstrap. Whew! I have learned a crazy amount through this project. I built on new AWS services (SNS and CloudWatch Events), used new tooling (Circle CI) and SaaS (SendGrid), and gained more general coding experience.
 
 At some point I also made this [little Python tool](https://github.com/em-shea/tones) that converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ). Pinyin is the romanization system for Chinese pronunciation.
 
-With this project in a good place, I'm going to leave it as is for now. I have ideas around ways to refine it, such as ensuring users don't receive the same word too close together, or expand it, for instance adding in elements of interactivity or [spaced repitition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab word recall. Please [let me know](https://twitter.com/messages/compose?recipient_id=2409492241) any feedback on the design or the user experience.
+###### Up Next
 
-In my next project, I'm looking to increase the complexity of my applications and work with larger datasets. I'm getting the hang of building the individual pieces of serverless apps and connecting them together, and getting comfortable with the tooling I've been using, namely AWS SAM and Circle CI. A logical next step would seem to be building something at greater scale. Stay tuned 😊.
+With this project in a good place, I'm going to leave it as is for now. I have ideas around ways to refine it, such as ensuring users don't receive the same word too close together, or expand it, for instance adding in elements of interactivity or [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab word recall. Please [let me know](https://twitter.com/messages/compose?recipient_id=2409492241) any feedback on the design or the user experience.
+
+In my next project, I'm looking to increase the complexity of my applications and work with larger data sets. I'm getting the hang of building the individual pieces of serverless apps and connecting them together and getting comfortable with the tooling I've been using, namely AWS SAM and Circle CI. A logical next step is to build something at greater scale by some measure. Stay tuned 😊.
