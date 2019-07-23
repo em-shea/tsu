@@ -1,22 +1,20 @@
 ---
 id: vocab-app-launch
-title: Daily Chinese vocab is live
-category: Open Source
+title: Launching daily Chinese vocab
+category: Projects
 status: published
 preview: >
-  My first open source project, Haohaotiantian.com, is launched! Check out the website and, if you are so inclined, 
-  subscribe to daily Chinese vocab word emails. You can choose your level based on China's standardized Mandarin testing levels (HSK 1-6) and 
-  preview what kinds of words you may see at that level. Unsubscribe any time through the links in the confirmation email or daily email 
-  messages.
+  [Haohaotiantian.com](https://haohaotiantian.com/) is live! 
+  Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. Here I'll walk through a bit about the design and the process of building it.
 ---
 
-My first open source project and public web app, [Haohaotiantian.com](https://haohaotiantian.com/), is launched! 
+[Haohaotiantian.com](https://haohaotiantian.com/) is live! 
 
 Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. You can choose your level based on China's standardized Mandarin testing levels (Hanyu Shuiping Kaoshi, or HSK, levels 1-6) and preview what kinds of words you may see at that level. Unsubscribe any time through the links in the confirmation email or daily emails.
 
-Here I'll walk through a bit about the design and the process of building it. There is plenty of ways to keep improving it, but I'm happy with where its at and what I've learned while building it. It has been great to have so much interest in it from Chinese-learning friends.
+Here I'll walk through a bit about the design and the process of building it. There is plenty of ways I would like to keep improving it, but I'm pleased with where its at and what I've learned while building it.
 
-#### How it's built
+#### How it works
 
 The source code is located [here](https://github.com/em-shea/vocab).
 
@@ -36,19 +34,20 @@ The user interface static content is hosted in S3 and distributed through CloudF
 
 ![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
 
+#### Development process
 
-I also made a [little Python tool](https://github.com/em-shea/tones) in the process that converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ).
+I built a minimal version of this project for myself to make learning and reviewing vocabulary a part of my daily routine. My personal prototype was just an S3 bucket for vocab list storage, a single function to choose and send the daily word, and an SNS topic I subscribed to for daily texts. It evolved into something bigger after I showed it to my Chinese-learning friends and several of them wanted to sign up.
 
-#### Why I built it
+Opening the app up to the public required a bit of backend refactoring and building a frontend. The first decision I made was to switch from daily texts to emails to reduce the cost of offering the service publicly. For the backend to send emails, I decided to use SendGrid because I liked the built-in email templating and handlebars to swap in email personalization, and because it didn't require a user confirmation to start sending emails. I still send a new user confirmation email, but intend it more as a notification with an opportunity to unsubscribe. 
 
-I've heard from so many people I've talked to in my quest to aquire more technical skills to just go build something. 
-Some of what I learned while building this:
+I got stuck for a while on how to make my email service fit into SendGrid's marketing or transactional model - at first I thought it should be transactional because I was adding user personalization by sending users the vocab word for the level they signed up for, but I also wanted to make use of SendGrid's marketing contact lists and marketing unsubscribe preferences.
 
-- Javascript basics
-- Making my own API
-- CI/CD with Circle CI
-- Simple Notification Service (SNS)
-- CloudWatch Events and Alarms
-- CORS errors are annoying
-- Error handling in Python
-- Bootstrap for a frontend UX that isn't awful
+Ultimately, I decided on marketing style emails. I didn't end up using SendGrid's email templates, since you would need to include a previously created template ID in SendGrid's create API call and you can't add personalization (ie, the daily vocab word) to an existing template. I copied over my template HTML, using handlebars to placehold for the daily vocab word, and packaged the template file with my SendDailyCampaign Lambda function code. In this way, the Lambda function reads the template HTML file, swaps in the daily vocab word, and creates a campaign using the email HTML as opposed to a template ID.
+
+The frontend user interface is fairly simple and straightforward. Nonetheless, it took me some time, being the first time I'd written Javascript, called my own APIs, or worked with Bootstrap. Whew! I have learned a crazy amount through this project. I built on new AWS services, used new tooling (Circle CI) and SaaS (SendGrid), and gained more general coding experience.
+
+At some point I also made this [little Python tool](https://github.com/em-shea/tones) that converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ). Pinyin is the romanization system for Chinese pronunciation.
+
+With this project in a good place, I'm going to leave it as is for now. I have ideas around ways to refine it, such as ensuring users don't receive the same word too close together, or expand it, for instance adding in elements of interactivity or [spaced repitition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab word recall. Please [let me know](https://twitter.com/messages/compose?recipient_id=2409492241) any feedback on the design or the user experience.
+
+In my next project, I'm looking to increase the complexity of my applications and work with larger datasets. I'm getting the hang of building the individual pieces of serverless apps and connecting them together, and getting comfortable with the tooling I've been using, namely AWS SAM and Circle CI. A logical next step would seem to be building something at greater scale. Stay tuned 😊.
