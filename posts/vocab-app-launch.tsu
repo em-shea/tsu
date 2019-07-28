@@ -8,31 +8,47 @@ preview: >
   Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. Here I'll walk through a bit about the design and the process of building it.
 ---
 
+Target audience: Other SA and technical contacts, with beginning basic explanation for non-technical
+Goal: Explain app & showcase architecture and design decisions
+
 [Haohaotiantian.com](https://haohaotiantian.com/) is live! 
 
-Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. You can choose your level based on China's standardized Mandarin testing levels (Hanyu Shuiping Kaoshi, or HSK, levels 1-6) and preview what kinds of words you may see at that level. Unsubscribe any time through the links in the confirmation email or daily emails.
+#### What it is
 
-Here I'll walk through a bit about the design and the process of building it. There is plenty of ways I would like to keep improving it, but I'm pleased with where its at and what I've learned while building it.
-
-#### How it works
-
-The source code is located [here](https://github.com/em-shea/vocab).
-
-###### Backend
-
-![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
-
-The core functionality of the app is to generate a random 'word of the day' from the vocab lists for each of the six HSK levels, and then send that word to subscribers of that level. The complete list of vocab words for all six levels is stored in a CSV in S3. A daily CloudWatch event rule is scheduled to trigger the SendDailyCampaign Lambda function. The SendDailyCampaign function calls the VocabRandomEntry function for level 1. VocabRandom Entry reads the vocab CSV and passes back a random level 1 word. SendDailyCampaign then creates and sends a SendGrid email campaign to subscribers for level 1, and loops through the rest of the levels. If the campaign for any level fails to create or send, a failure notification is sent to an SNS topic to alert the app owner.
-
-###### Frontend
+On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There is sample vocabulary for each level available for you to browse and assess your level. 
 
 ![Website screenshot](https://s3.amazonaws.com/haohaotiantian.com/haohaotiantian-screenshot.PNG)
 
-To allow users to subscribe, the web page has a level selection and email subscribe input form that calls my API Gateway endpoint. The endpoint passes the users level and email to the Subscribe Lambda function, which calls SendGrid's API to add the contact to the given level subscriber list, invokes the NewUserConfirmation function to send a confirmation email through SendGrid, and sends an SNS notification letting the app owner know there is a new subscriber. This invokes the HappyDance function 😄. 
+Once you sign up, daily vocab words will be sent to your email. Emails look like this:
 
-To help users assess their own level, I created an API endpoint that returns five random words for each HSK level. The web page loads these words when it is loaded and displays them to the user as preview words. 
+(add image)
+[![Example vocab email](/static/images/imagename.png)](/static/images/imagename-full.png)
+> 睡觉
+> shuì jiào
+> to go to bed; to go to sleep
+> [Example sentences](https://www.yellowbridge.com/chinese/sentsearch.php?word=睡觉)
 
-The user interface static content is hosted in S3 and distributed through CloudFront. 
+Levels 1-3 use https://www.yellowbridge.com/ for example sentences. Yellow Bridge has pronunciation audio and character stroke order animations. Levels 4-6 use https://fanyi.baidu.com which has more complex example sentences.
+
+Unsubscribe any time through the links in the confirmation email or daily emails.
+
+Some opportunities for enhancing the service are adding in interactivity and [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab retention. If you have any suggestions for the user experience, [let me know!](https://twitter.com/messages/compose?recipient_id=2409492241)
+
+#### How it works
+
+Below I'll walk through a bit about the design and the process of building it. The source code is located [here](https://github.com/em-shea/vocab).
+
+![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
+
+The core functionality of the app is to generate a random word each day for each of the six HSK levels and then send that word to subscribers for that level. The app is primarily AWS Lambda functions behind an API Gateway API and integrated with SendGrid for email. S3 is used for vocab word storage as well as static content, which is distributed through CloudFront.
+
+A user signing up on the website triggers a **new user workflow**. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then invokes the new user confirmation function, which calls the SendGrid API to send a confirmation email. 
+
+If any step fails or once the new user is successfully signed up, a message is sent to an SNS topic to notify the app owner (me).
+
+To trigger the **daily vocab workflow**, a CloudWatch event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
+
+To allow new users to preview words at each vocab level, the web page loads results from an API Gateway endpoint that returns five random words for each level.
 
 #### Development process
 
