@@ -5,7 +5,7 @@ category: Projects
 status: published
 preview: >
   Haohaotiantian.com is live! 
-  Check out the website and, if you are so inclined, subscribe to daily Chinese vocab word emails. Here I'll walk through a bit about the design and the process of building it.
+  On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. Here I'll walk through a bit about the design and the process of building it.
 ---
 
 Target audience: Other SA and technical contacts, with beginning basic explanation for non-technical
@@ -16,6 +16,8 @@ Goal: Explain app & showcase architecture and design decisions
 #### What it is
 
 On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There is sample vocabulary for each level available for you to browse and assess your level. 
+
+The name 'Haohaotiantian' is borrowed from a common saying - Study hard and make progress everyday (好好学习，天天上向).
 
 ![Website screenshot](https://s3.amazonaws.com/haohaotiantian.com/haohaotiantian-screenshot.PNG)
 
@@ -36,7 +38,7 @@ Some opportunities for enhancing the service are adding in interactivity and [sp
 
 #### How it works
 
-Below I'll walk through a bit about the design and the process of building it. The source code is located [here](https://github.com/em-shea/vocab).
+Here I'll walk through a bit about the design and the process of building it. The source code is located [here](https://github.com/em-shea/vocab).
 
 ![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
 
