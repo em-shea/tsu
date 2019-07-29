@@ -4,54 +4,46 @@ title: Launching daily Chinese vocab
 category: Projects
 status: published
 preview: >
-  Haohaotiantian.com is live! 
-  On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. Here I'll walk through the design and the process of building it.
+  Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. In this post, I will share an overview of how the app works, how I designed it, and the architectural design.
 ---
 
 [Haohaotiantian.com](https://haohaotiantian.com/) is live! I built a web app for Chinese language learners to receive daily vocab words. In this post, I will share an overview of how the app works, how I designed it, and the architectural design.
 
 Jump to:
+
 - [About Haohaotiantian](#about-haohaotiantian)
 - [Development process](#development-process)
 - [How it's built](#how-its-built)
 
 #### About Haohaotiantian
 
-On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There is sample vocabulary for each level available for you to browse and assess your level. 
+On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There are sample words for each level to help you assess your level. 
 
-The name 'Haohaotiantian' is borrowed from a common saying - Study hard and make progress everyday (好好学习，天天上向).
+The name 'Haohaotiantian' is borrowed from a well-known phrase - Study hard and make progress everyday (好好学习，天天上向).
 
-![Website screenshot](https://s3.amazonaws.com/haohaotiantian.com/haohaotiantian-screenshot.PNG)
+![Website screenshot](./vocab-app-launch/haohaotiantian-screenshot.PNG)
 
 Once you sign up, daily vocab words will be sent to your email. Emails look like this:
 
-![Website screenshot](./vocab-app-launch/haohaotiantian-screenshot.PNG)(maxwidth=600px)
-(add image)
-[![Example vocab email](/static/images/imagename.png)](/static/images/imagename-full.png)
-> 睡觉
-> shuì jiào
-> to go to bed; to go to sleep
-> [Example sentences](https://www.yellowbridge.com/chinese/sentsearch.php?word=睡觉)
+![Email screenshot](./vocab-app-launch/haohaotiantian-email2.PNG)
 
 Levels 1-3 use [www.yellowbridge.com](https://www.yellowbridge.com/) for example sentences. Yellow Bridge has pronunciation audio and character stroke order animations. Levels 4-6 use [fanyi.baidu.com](https://fanyi.baidu.com) which has more complex example sentences.
 
 Unsubscribe any time through the links in the confirmation email or daily emails.
 
-Some opportunities for enhancing the service are adding in interactivity and [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab retention. If you have any suggestions for the user experience, [let me know!](https://twitter.com/messages/compose?recipient_id=2409492241)
+Some recommendations for enhancing the service that I have received are adding in interactivity and [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab retention. If you have any suggestions for the user experience, [let me know!](https://twitter.com/messages/compose?recipient_id=2409492241)
 
 #### Development process
 
-This daily vocab project has evolved and increased in complexity over time. I built a much simpler version of the app just for myself initially, as a way to add reviewing Chinese vocab into my day-to-day. 
+This daily vocab project has evolved and increased in complexity over time. I initially built a much simpler version of the app just for myself, as a way to add reviewing Chinese vocab into my day-to-day. 
 
-(add image of simple version)
+![Simple architecture diagram](./vocab-app-launch/vocab-app-diagram-v1.PNG)(maxwidth=450px)
 
-In this early version, I had a daily CloudWatch event rule invoking a simple Lambda function. This function pulled a random word from the vocab list stored in S3 and sent the message to an SNS topic. I subscribed to the topic to get messages as texts, as I found text notifications harder to ignore. 
+In this early version, I had a daily CloudWatch event rule invoking a simple Lambda function. This function pulled a random word from the vocab list stored in S3 and sent the message to an SNS topic. I subscribed to the topic to get messages as texts, as I found text notifications harder to ignore than email. 
 
 In order to subscribe a friend who only wanted level 1 words to the service, I created six different SNS topics and edited my Lambda function to first filter the vocab list by levels, and then loop through those lists and send an appropriate level word to each SNS topic. 
 
-I also added a link to example sentences in the daily messages to provide more context on the word. 
-
-(add image of version with multiple SNS topics)
+![Midpoint architecture diagram](./vocab-app-launch/vocab-app-diagram-v2.PNG)(maxwidth=550px)
 
 As I got more interest from friends in the service, I decided to move sending messages to users off of SNS. The first motivation was because SNS requires email confirmation to subscribe a new recipient. The email comes from 'AWS Notifications' and includes the text,
 
@@ -67,7 +59,9 @@ I built in error handling capabilities, such as SNS notifications on failure and
 
 Finally, to fully open the app up to the public and allow users to subscribe online, I created the frontend user interface. 
 
-Throughout project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I foresee using CloudWatch events and SNS in many more projects to come. I set up CI/CD through Circle CI and integrated with SendGrid. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and the AWS Serverless Application Model.
+A diagram of the finished product is [below](#how-its-built).
+
+Throughout this project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I foresee using CloudWatch events and SNS in many more projects to come. I set up CI/CD through Circle CI and integrated with SendGrid. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and  deploying with AWS Serverless Application Model.
 
 At some point, I made this [little Python tool](https://github.com/em-shea/tones). It converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ), pinyin being the romanization system for Chinese pronunciation.
 
@@ -77,7 +71,7 @@ Below, I will walk through how the current iteration of the app is built.
 
 The source code is [located here](https://github.com/em-shea/vocab).
 
-![Architectural diagram](https://s3.amazonaws.com/haohaotiantian.com/Vocab+app+v2+(2).png)
+![Final architecture diagram](./vocab-app-launch/vocab-app-diagram-v3.PNG)(maxwidth=550px)
 
 The core functionality of the app is to generate a random word each day for each of the six HSK levels and then send that word to subscribers for that level. The app is primarily AWS Lambda functions behind an API Gateway API and integrated with SendGrid for email. S3 is used for vocab word storage as well as static content, which is distributed through CloudFront.
 
