@@ -4,10 +4,10 @@ title: Launching daily Chinese vocab
 category: Projects
 status: published
 preview: >
-  Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. In this post, I will share an overview of how the app works, how I designed it, and the architectural design.
+  Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
 ---
 
-[Haohaotiantian.com](https://haohaotiantian.com/) is live! I built a web app for Chinese language learners to receive daily vocab words. In this post, I will share an overview of how the app works, how I designed it, and the architectural design.
+Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
 
 Jump to:
 
@@ -51,9 +51,15 @@ As I got more interest from friends in the service, I decided to move sending me
 
 which was not end user friendly. 
 
-A second factor was that I wanted to move to primarily sending emails instead of texts for cost. The [AWS free tier for email on SNS](https://aws.amazon.com/sns/pricing/) is 1,000 messages/month, compared to 100 free tier text messages/month as of this writing. Similarly, the cost outside of the free tier is also higher for texts. 
+A second factor was that I wanted to move to primarily sending emails instead of texts for cost. Using [SNS pricing](https://aws.amazon.com/sns/pricing/) as a benchmark, with 50 users per month I would pay $9.03 per month for texts as opposed to $0.01 for email. For a personal project, I am going with emails.
 
-I currently have the app integrated with SendGrid for sending email and managing contact lists. I am using a marketing email campaign model to send daily emails to all subscribers for each level, and transactional emails to send new user confirmation emails.
+> 50 users * 30 days = 1500 messages/month
+>
+> (1500 - 100 free tier texts) * $0.00645 cost (in the U.S.) = $9.03 for texts
+>
+> (1500 - 1000 free tier emails) * $0.00002 cost = $0.01 for emails
+
+I currently have the app integrated with SendGrid for sending email and managing contact lists. I chose SendGrid for some of the built-in functionality, like contact management and email templates. I may build my own features for these aspects later, but for now offloading them has saved time.
 
 I built in error handling capabilities, such as SNS notifications on failure and error handling in Python to allow functions to continue running if a single API call fails.
 
