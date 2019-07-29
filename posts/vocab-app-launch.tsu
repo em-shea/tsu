@@ -7,7 +7,7 @@ preview: >
   Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
 ---
 
-Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
+[Haohaotiantian.com](https://haohaotiantian.com/) is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
 
 Jump to:
 
@@ -25,7 +25,7 @@ The name 'Haohaotiantian' is borrowed from a well-known phrase - Study hard and 
 
 Once you sign up, daily vocab words will be sent to your email. Emails look like this:
 
-![Email screenshot](./vocab-app-launch/haohaotiantian-email2.PNG)
+![Email screenshot](./vocab-app-launch/haohaotiantian-email.PNG)
 
 Levels 1-3 use [www.yellowbridge.com](https://www.yellowbridge.com/) for example sentences. Yellow Bridge has pronunciation audio and character stroke order animations. Levels 4-6 use [fanyi.baidu.com](https://fanyi.baidu.com) which has more complex example sentences.
 
@@ -51,7 +51,7 @@ As I got more interest from friends in the service, I decided to move sending me
 
 which was not end user friendly. 
 
-A second factor was that I wanted to move to primarily sending emails instead of texts for cost. Using [SNS pricing](https://aws.amazon.com/sns/pricing/) as a benchmark, with 50 users per month I would pay $9.03 per month for texts as opposed to $0.01 for email. For a personal project, I am going with emails.
+A second factor was that I wanted to move to primarily sending emails instead of texts for cost. Using [SNS pricing](https://aws.amazon.com/sns/pricing/) as a benchmark, with 50 users per month I would pay $9.03 per month for texts as opposed to $0.01 for email (as of this writing). For a personal project, I am going with emails.
 
 > 50 users * 30 days = 1500 messages/month
 >
