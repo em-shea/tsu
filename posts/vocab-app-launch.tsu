@@ -10,6 +10,7 @@ preview: >
 
 [Haohaotiantian.com](https://haohaotiantian.com/) is live! I built a web app for Chinese language learners to receive daily vocab words. In this post, I will share an overview of how the app works, how I designed it, and the architectural design.
 
+Jump to:
 - [About Haohaotiantian](#about-haohaotiantian)
 - [Development process](#development-process)
 - [How it's built](#how-its-built)
@@ -24,6 +25,7 @@ The name 'Haohaotiantian' is borrowed from a common saying - Study hard and make
 
 Once you sign up, daily vocab words will be sent to your email. Emails look like this:
 
+![Website screenshot](./vocab-app-launch/haohaotiantian-screenshot.PNG)(maxwidth=600px)
 (add image)
 [![Example vocab email](/static/images/imagename.png)](/static/images/imagename-full.png)
 > 睡觉
@@ -59,13 +61,13 @@ which was not end user friendly.
 
 A second factor was that I wanted to move to primarily sending emails instead of texts for cost. The [AWS free tier for email on SNS](https://aws.amazon.com/sns/pricing/) is 1,000 messages/month, compared to 100 free tier text messages/month as of this writing. Similarly, the cost outside of the free tier is also higher for texts. 
 
-I currently have a SendGrid integration for sending email and managing contact lists. I am using a marketing email campaign model to send daily emails to all subscribers for each level, and transactional emails to send new user confirmation emails.
+I currently have the app integrated with SendGrid for sending email and managing contact lists. I am using a marketing email campaign model to send daily emails to all subscribers for each level, and transactional emails to send new user confirmation emails.
 
-The fully open the app up to the public and allow users to subscribe online, I created the frontend user interface. 
+I built in error handling capabilities, such as SNS notifications on failure and error handling in Python to allow functions to continue running if a single API call fails.
 
-Finally, I built in error handling capabilities, such as SNS notifications on failure and error handling in Python to allow functions to continue running if a single API call fails.
+Finally, to fully open the app up to the public and allow users to subscribe online, I created the frontend user interface. 
 
-Throughout project, I learned about refactoring an application based on new user requirements and got to use new AWS services and SaaS tools. I foresee using CloudWatch events and SNS in many more projects to come. I set up CI/CD through Circle CI and integrated with SendGrid. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and the AWS Serverless Application Model.
+Throughout project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I foresee using CloudWatch events and SNS in many more projects to come. I set up CI/CD through Circle CI and integrated with SendGrid. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and the AWS Serverless Application Model.
 
 At some point, I made this [little Python tool](https://github.com/em-shea/tones). It converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ), pinyin being the romanization system for Chinese pronunciation.
 
@@ -79,10 +81,10 @@ The source code is [located here](https://github.com/em-shea/vocab).
 
 The core functionality of the app is to generate a random word each day for each of the six HSK levels and then send that word to subscribers for that level. The app is primarily AWS Lambda functions behind an API Gateway API and integrated with SendGrid for email. S3 is used for vocab word storage as well as static content, which is distributed through CloudFront.
 
-A user signing up on the website triggers a **new user workflow**. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then invokes the new user confirmation function, which calls the SendGrid API to send a confirmation email. 
+A user signing up on the website triggers a new user workflow. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then invokes the new user confirmation function, which calls the SendGrid API to send a confirmation email. 
 
 If any step fails or once the new user is successfully signed up, a message is sent to an SNS topic to notify the app owner (me).
 
-To trigger the **daily vocab workflow**, a CloudWatch event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
+To trigger the daily vocab workflow, a CloudWatch event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
 
 To allow new users to preview words at each vocab level, the web page loads results from an API Gateway endpoint that returns five random words for each level.
