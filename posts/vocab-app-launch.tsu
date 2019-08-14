@@ -67,7 +67,7 @@ Finally, to fully open the app up to the public and allow users to subscribe onl
 
 A diagram of the finished product is [below](#how-its-built).
 
-Throughout this project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I foresee using CloudWatch events and SNS in many more projects to come. I set up CI/CD through Circle CI and integrated with SendGrid. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and  deploying with AWS Serverless Application Model.
+Throughout this project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I worked with CloudWatch events, CloudWatch Logs metric filters, and SNS. I set up a CI/CD through Circle CI, an integration with SendGrid, and a staging environment. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and  deploying with AWS Serverless Application Model.
 
 At some point, I made this [little Python tool](https://github.com/em-shea/tones). It converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ), pinyin being the romanization system for Chinese pronunciation.
 
@@ -77,14 +77,17 @@ Below, I will walk through how the current iteration of the app is built.
 
 The source code is [located here](https://github.com/em-shea/vocab).
 
-![Final architecture diagram](./vocab-app-launch/vocab-app-diagram-v3.PNG)(maxwidth=550px)
+![Final architecture diagram](./vocab-app-launch/Vocab app v3.PNG)(maxwidth=550px)
 
 The core functionality of the app is to generate a random word each day for each of the six HSK levels and then send that word to subscribers for that level. The app is primarily AWS Lambda functions behind an API Gateway API and integrated with SendGrid for email. S3 is used for vocab word storage as well as static content, which is distributed through CloudFront.
 
-A user signing up on the website triggers a new user workflow. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then invokes the new user confirmation function, which calls the SendGrid API to send a confirmation email. 
+A user signing up on the website triggers a new user workflow. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then calls the SendGrid API to send a confirmation email. 
 
-If any step fails or once the new user is successfully signed up, a message is sent to an SNS topic to notify the app owner (me).
-
-To trigger the daily vocab workflow, a CloudWatch event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
+To trigger the daily vocab workflow, a CloudWatch Logs event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
 
 To allow new users to preview words at each vocab level, the web page loads results from an API Gateway endpoint that returns five random words for each level.
+
+For pieces of code that are used by multiple functions, such as generating a random word and pulling the right contact list for a given level, the modules are attached as a Lambda Layer and imported to the functions that use them.
+
+If any of the core functions error out, there is a CloudWatch metrics filter in place that catches error messages. This filter triggers a function that formats the error messages and sends it to SNS.
+
