@@ -1,15 +1,15 @@
 ---
-id: vocab-app-launch
-title: Launching daily Chinese vocab
+id: chinese-vocab-app
+title: Developing a daily Chinese vocab app
 category: Projects
 status: published
 preview: >
-  I built a web app for Chinese language learners to receive daily vocab words, [Haohaotiantian.com](https://haohaotiantian.com/). In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
+  I built a web app for Chinese language learners to receive daily vocab words, Haohaotiantian.com. In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
 ---
 
 I built a web app for Chinese language learners to receive daily vocab words, [Haohaotiantian.com](https://haohaotiantian.com/). In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
 
-Jump to:
+##### Jump to:
 
 - [About Haohaotiantian](#about-haohaotiantian)
 - [Development process](#development-process)
@@ -18,15 +18,15 @@ Jump to:
 
 #### About Haohaotiantian
 
-On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There are sample words for each level to help you assess your level. 
+On Haohaotiantian, Chinese learners can subscribe to daily vocab words to build their vocabulary. The name 'Haohaotiantian' is borrowed from a well-known phrase - Study hard and make progress everyday (好好学习，天天上向).
 
-The name 'Haohaotiantian' is borrowed from a well-known phrase - Study hard and make progress everyday (好好学习，天天上向).
+The vocabulary by level (1-6) is from the Hanyu Shuiping Kaoshi (HSK), China's standardized Mandarin testing levels. There are sample words for each level to help users assess their level. 
 
-![Website screenshot](./vocab-app-launch/haohaotiantian-screenshot.PNG)
+![Website screenshot](./chinese-vocab-app/haohaotiantian-screenshot.PNG)
 
 Once a user signs up, vocab words will be sent to their email once a day. Emails look like this:
 
-![Email screenshot](./vocab-app-launch/haohaotiantian-email.PNG)
+![Email screenshot](./chinese-vocab-app/haohaotiantian-email.PNG)
 
 Levels 1-3 use [www.yellowbridge.com](https://www.yellowbridge.com/) for example sentences. YellowBridge has pronunciation audio and character stroke order animations. Levels 4-6 use [fanyi.baidu.com](https://fanyi.baidu.com) which has more complex example sentences.
 
@@ -34,23 +34,17 @@ Users can unsubscribe any time through the links in the confirmation email or da
 
 #### Development process
 
-This daily vocab project has evolved and increased in complexity over time. I initially built a much simpler version of the app just for myself, as a way to add reviewing Chinese vocab into my day-to-day. 
+This daily vocab project has evolved and increased in complexity over time. I initially built a much simpler version of the app just for myself, as a way to add reviewing Chinese vocab into my day-to-day routine. 
 
-![Simple architecture diagram](./vocab-app-launch/vocab-app-diagram-v1.PNG)(maxwidth=450px)
+![Simple architecture diagram](./chinese-vocab-app/vocab-app-diagram-v1.PNG)(maxwidth=700px)
 
 In this early version, I had a daily CloudWatch event rule invoking a simple Lambda function. This function pulled a random word from the vocab list stored in S3 and sent the message to an SNS topic. I subscribed to the topic to get messages as texts, as I found text notifications harder to ignore than email. 
 
 In order to subscribe a friend who only wanted level 1 words to the service, I created six different SNS topics and edited my Lambda function to first filter the vocab list by levels, and then loop through those lists and send an appropriate level word to each SNS topic. 
 
-![Midpoint architecture diagram](./vocab-app-launch/vocab-app-diagram-v2.PNG)(maxwidth=550px)
+![Midpoint architecture diagram](./chinese-vocab-app/vocab-app-diagram-v2.PNG)(maxwidth=700px)
 
-As I got more interest in the service, I decided to move sending messages to users off of SNS. The first motivation was because SNS requires email confirmation to subscribe a new recipient. The email comes from 'AWS Notifications' and includes the text,
-
-> You have chosen to subscribe to the topic: arn:aws:sns:us-east-1:{topic arn}
-
-which was not end user friendly. 
-
-A second factor was that I wanted to move to primarily sending emails instead of texts for cost. Using [SNS pricing](https://aws.amazon.com/sns/pricing/) as a benchmark, with 50 users per month I would pay $9.03 per month for texts as opposed to $0.01 for email (as of this writing). For a personal project, I am going with emails.
+As I got more interest in the service, I decided to move sending messages to users off of SNS. The first motivation was because I wanted to move to primarily sending emails instead of texts for cost. Using [SNS pricing](https://aws.amazon.com/sns/pricing/) as a benchmark, with 50 users per month I would pay $9.03 per month for texts as opposed to $0.01 for email (as of this writing). For a personal project, I am going with emails.
 
 > 50 users * 30 days = 1500 messages/month
 >
@@ -58,9 +52,15 @@ A second factor was that I wanted to move to primarily sending emails instead of
 >
 > (1500 - 1000 free tier emails) * $0.00002 cost/email = $0.01 for emails
 
+A second factor was that SNS email subscriptions require email confirmation to subscribe a new recipient. The email comes from 'AWS Notifications' and includes the text,
+
+> You have chosen to subscribe to the topic: arn:aws:sns:us-east-1:{topic arn}
+
+which was not end user friendly. 
+
 I currently have the app integrated with SendGrid for sending email and managing contact lists. I chose SendGrid for some of the built-in functionality, like contact management and email templates. I may build my own features for these aspects later, but for now offloading them has saved time.
 
-I built in error handling capabilities, such as SNS notifications on failure and error handling in Python to allow functions to continue running if a single API call fails.
+I built in error handling capabilities, such as error handling within the function code to allow functions to continue running if a single API call fails and SNS notifications on failures.
 
 Finally, to fully open the app up to the public and allow users to subscribe online, I created the frontend user interface. 
 
@@ -70,13 +70,13 @@ Below, I'll walk through how the current iteration of the app is architected.
 
 The source code is [located here](https://github.com/em-shea/vocab).
 
-![Final architecture diagram](./vocab-app-launch/Vocab app v3.PNG)(maxwidth=550px)
+![Final architecture diagram](./chinese-vocab-app/vocab-app-v3.PNG)(maxwidth=700px)
 
 The core functionality of the app is to generate a random word each day for each of the six HSK levels and then send that word to subscribers for that level. The app is primarily AWS Lambda functions behind an API Gateway API and integrated with SendGrid for email. S3 is used for vocab word storage as well as static content, which is distributed through CloudFront.
 
 A user signing up on the website triggers a new user workflow. A Lambda function subscribes the new user by calling SendGrid's create contact API and adding that new contact ID to the SendGrid contact list for the appropriate vocab level. The function then calls the SendGrid API to send a confirmation email. 
 
-To trigger the daily vocab workflow, a CloudWatch Logs event rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
+To trigger the daily vocab workflow, a CloudWatch Events rule is scheduled at 12:00 PM PST each day. This invokes a function that sends the daily email campaign. This function loops through each of the six levels, selecting a random word from the vocab database in S3 and creating and sending a SendGrid email campaign. A failure for any of the levels sends an error notification to SNS, while allowing the rest of the levels to continue to send.
 
 To allow new users to preview words at each vocab level, the web page loads results from an API Gateway endpoint that returns five random words for each level.
 
@@ -100,7 +100,8 @@ I see opportunities to expand on this project, for example adding in interactivi
 
 ---
 
-Visit [Haohaotiantian.com](haohaotiantian.com)
+Visit [Haohaotiantian.com](https://haohaotiantian.com)
+
 Check out the [source code](https://github.com/em-shea/vocab)
 
 🌻
