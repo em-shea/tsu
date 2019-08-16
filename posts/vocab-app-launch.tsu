@@ -4,16 +4,17 @@ title: Launching daily Chinese vocab
 category: Projects
 status: published
 preview: >
-  Haohaotiantian.com is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
+  I built a web app for Chinese language learners to receive daily vocab words, [Haohaotiantian.com](https://haohaotiantian.com/). In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
 ---
 
-[Haohaotiantian.com](https://haohaotiantian.com/) is live! I built a web app for Chinese language learners to receive daily vocab words. Here, I will give an overview of how the app works, how I designed it, and the architectural design.
+I built a web app for Chinese language learners to receive daily vocab words, [Haohaotiantian.com](https://haohaotiantian.com/). In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
 
 Jump to:
 
 - [About Haohaotiantian](#about-haohaotiantian)
 - [Development process](#development-process)
-- [How it's built](#how-its-built)
+- [How it works](#how-it-works)
+- [Learnings](#learnings)
 
 #### About Haohaotiantian
 
@@ -23,15 +24,13 @@ The name 'Haohaotiantian' is borrowed from a well-known phrase - Study hard and 
 
 ![Website screenshot](./vocab-app-launch/haohaotiantian-screenshot.PNG)
 
-Once you sign up, daily vocab words will be sent to your email. Emails look like this:
+Once a user signs up, vocab words will be sent to their email once a day. Emails look like this:
 
 ![Email screenshot](./vocab-app-launch/haohaotiantian-email.PNG)
 
-Levels 1-3 use [www.yellowbridge.com](https://www.yellowbridge.com/) for example sentences. Yellow Bridge has pronunciation audio and character stroke order animations. Levels 4-6 use [fanyi.baidu.com](https://fanyi.baidu.com) which has more complex example sentences.
+Levels 1-3 use [www.yellowbridge.com](https://www.yellowbridge.com/) for example sentences. YellowBridge has pronunciation audio and character stroke order animations. Levels 4-6 use [fanyi.baidu.com](https://fanyi.baidu.com) which has more complex example sentences.
 
-Unsubscribe any time through the links in the confirmation email or daily emails.
-
-Some recommendations for enhancing the service that I have received are adding in interactivity and [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab retention. If you have any suggestions for the user experience, [let me know!](https://twitter.com/messages/compose?recipient_id=2409492241)
+Users can unsubscribe any time through the links in the confirmation email or daily emails.
 
 #### Development process
 
@@ -45,7 +44,7 @@ In order to subscribe a friend who only wanted level 1 words to the service, I c
 
 ![Midpoint architecture diagram](./vocab-app-launch/vocab-app-diagram-v2.PNG)(maxwidth=550px)
 
-As I got more interest from friends in the service, I decided to move sending messages to users off of SNS. The first motivation was because SNS requires email confirmation to subscribe a new recipient. The email comes from 'AWS Notifications' and includes the text,
+As I got more interest in the service, I decided to move sending messages to users off of SNS. The first motivation was because SNS requires email confirmation to subscribe a new recipient. The email comes from 'AWS Notifications' and includes the text,
 
 > You have chosen to subscribe to the topic: arn:aws:sns:us-east-1:{topic arn}
 
@@ -55,9 +54,9 @@ A second factor was that I wanted to move to primarily sending emails instead of
 
 > 50 users * 30 days = 1500 messages/month
 >
-> (1500 - 100 free tier texts) * $0.00645 cost (in the U.S.) = $9.03 for texts
+> (1500 - 100 free tier texts) * $0.00645 cost/text (in the U.S.) = $9.03 for texts
 >
-> (1500 - 1000 free tier emails) * $0.00002 cost = $0.01 for emails
+> (1500 - 1000 free tier emails) * $0.00002 cost/email = $0.01 for emails
 
 I currently have the app integrated with SendGrid for sending email and managing contact lists. I chose SendGrid for some of the built-in functionality, like contact management and email templates. I may build my own features for these aspects later, but for now offloading them has saved time.
 
@@ -65,15 +64,9 @@ I built in error handling capabilities, such as SNS notifications on failure and
 
 Finally, to fully open the app up to the public and allow users to subscribe online, I created the frontend user interface. 
 
-A diagram of the finished product is [below](#how-its-built).
+Below, I'll walk through how the current iteration of the app is architected.
 
-Throughout this project, I learned about refactoring an application based on changing user requirements, and I got to use new AWS services and SaaS tools. I worked with CloudWatch events, CloudWatch Logs metric filters, and SNS. I set up a CI/CD through Circle CI, an integration with SendGrid, and a staging environment. For the frontend, I picked up some Javascript and worked with Bootstrap. I also gained deeper experience developing in Python and  deploying with AWS Serverless Application Model.
-
-At some point, I made this [little Python tool](https://github.com/em-shea/tones). It converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ), pinyin being the romanization system for Chinese pronunciation.
-
-Below, I will walk through how the current iteration of the app is built.
-
-#### How it's built
+#### How it works
 
 The source code is [located here](https://github.com/em-shea/vocab).
 
@@ -90,4 +83,25 @@ To allow new users to preview words at each vocab level, the web page loads resu
 For pieces of code that are used by multiple functions, such as generating a random word and pulling the right contact list for a given level, the modules are attached as a Lambda Layer and imported to the functions that use them.
 
 If any of the core functions error out, there is a CloudWatch metrics filter in place that catches error messages. This filter triggers a function that formats the error messages and sends it to SNS.
+
+#### Learnings
+
+It's been very cool to see this project evolve from a single Lambda function to a full fledged application that's useful to me and other Chinese learners.
+
+Along with the application complexity, I expanded on and increased my depth in the development tools I have been using. I have been working with AWS's Serverless Application Model for a while, and got to experiment with deploying more services (SNS, API Gateway, CloudWatch Events, and CloudWatch Logs) with increased complexity (dependent resources, environment variables) with SAM. 
+
+I set up staging and prod environments and a continuous delivery pipeline with GitHub and Circle CI - that's another blog post in itself. Having a deployment pipeline in place has made all the difference in getting away from manually editing functions in the AWS console and moving towards more scalable and faster development practices.
+
+For the frontend, I learned some Javascript to call my APIs and used Bootstrap to make it look nice.
+
+At some point, I made this [little Python tool](https://github.com/em-shea/tones). It converts numerical pinyin (bao1 guo3) to tone marked pinyin (bāo guǒ), pinyin being the romanization system for Chinese pronunciation.
+
+I see opportunities to expand on this project, for example adding in interactivity and [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) for better vocab retention, or adding additional vocab lists for users to subscribe to outside of standard HSK words, like food and cooking or technology vocabulary.
+
+---
+
+Visit [Haohaotiantian.com](haohaotiantian.com)
+Check out the [source code](https://github.com/em-shea/vocab)
+
+🌻
 

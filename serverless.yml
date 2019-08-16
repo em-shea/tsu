@@ -114,7 +114,7 @@ resources:
       Properties:
         DistributionConfig:
           Enabled: true
-          Comment: Tsu ${self:custom.stage} Lambda
+          Comment: Tsu ${self:custom.stage}
           Aliases:
           - ${self:custom.config.domain}
           ViewerCertificate:
