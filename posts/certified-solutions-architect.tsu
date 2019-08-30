@@ -3,27 +3,27 @@ id: certified-solutions-architect
 title: Studying for the Certified Solutions Architect exam
 category: AWS
 preview: >
-  Passing the Associate Certified Solutions Architect (CSA) exam was one of the top recommendations I received on how to get more technical depth with AWS services, along with getting hands-on experience. Here I'll walk you through the steps I took to prepare for and pass my exam.
+  Passing the Associate Certified Solutions Architect exam was one of the top recommendations I received on how to get more technical depth with AWS services, along with getting hands-on experience. Here I'll walk through how I prepared for the exam.
 ---
 
-Passing the [Associate Certified Solutions Architect](https://aws.amazon.com/certification/certified-solutions-architect-associate/) (CSA) exam was one of the top recommendations I received on how to get more technical depth with AWS services, along with getting hands-on experience. Here I'll walk you through the ways I prepared for the exam.
+Passing the [Associate Certified Solutions Architect](https://aws.amazon.com/certification/certified-solutions-architect-associate/) (CSA) exam was one of the top recommendations I received on how to get more technical depth with AWS services, along with getting hands-on experience. Here I'll walk through how I prepared for the exam.
 
-The time it takes to prepare for the CSA varies depending on your AWS experience. I studied off and on for about a year, passed my Certified Cloud Practitioner exam, and then studied intently for about two months ahead of the Associate CSA.
+The time it takes to prepare for the CSA varies depending on your AWS experience. I studied off and on for about a year, including passing my Certified Cloud Practitioner exam, and then studied intently for about two months ahead of the Associate CSA.
 
 These are the steps I took studying for the certification. Not everything on this list is essential by any means, but I hope it's helpful to know what resources are out there! 
 
-Jump to:
+##### Jump to:
 
-  1. [Take the Cloud Practitioner Essentials training](#1-take-the-cloud-practitioner-essentials-training)
-  2. [Make an AWS account and explore the console](#2-make-an-aws-account-and-explore-the-console)
-  3. [Take the AWS Certified Cloud Practitioner exam](#3-take-the-aws-certified-cloud-practitioner-exam)
-  4. [Read/skim the official CSA Study Guide](#4-read/skim-the-official-csa-study-guide)
-  5. [Read a few AWS whitepapers](#5-read-a-few-aws-whitepapers)
-  6. [Study with Linux Academy or A Cloud Guru](#6-study-with-linux-academy-or-a-cloud-guru)
+  1. [Take the Cloud Practitioner Essentials training](#1-take-the-cloud-practitioner-essentials-traininghttpsawsamazoncomtrainingcourse-descriptionscloud-practitioner-essentials)
+  2. [Make an AWS account and explore the console](#2-make-an-aws-accounthttpsawsamazoncomfree-and-explore-the-console)
+  3. [Take the AWS Certified Cloud Practitioner exam](#3-take-the-aws-certified-cloud-practitioner-examhttpsawsamazoncomcertificationcertified-cloud-practitioner)
+  4. [Read/skim the official CSA Study Guide](#4-readskim-the-official-csa-study-guidehttpswwwamazoncomcertified-solutions-architect-study-guidedp111950421xrefpd_lpo_sbs_14_t_0_encodingutf8psc1refrid9y5wj0212s5jhtmxn9gc)
+  5. [Read a few AWS whitepapers](#5-read-a-few-aws-whitepapershttpsawsamazoncomwhitepaperswhitepapers-mainsort-byitemadditionalfieldssortdatewhitepapers-mainsort-orderdescawsfwhitepapers-content-typecontent-type23whitepaper)
+  6. [Study with Linux Academy or A Cloud Guru](#6-study-with-linux-academyhttpslinuxacademycom-or-a-cloud-guruhttpsacloudguru)
   7. [Follow AWS tutorials for core services](#7-follow-aws-tutorials-for-core-services)
-  8. [Take the Exam Readiness or Architecting on AWS trainings](#8-take-the-exam-readiness-or-architecting-on-aws-trainings)
+  8. [Take the Exam Readiness or Architecting on AWS trainings](#8-take-the-exam-readinesshttpswwwawstrainingdetailscurriculumid20685-or-architecting-on-awshttpswwwawstrainingtrainingschedulecourseid10002sortfield2includeunlistedfalsedaterangestart2019-08-30t034657048zdaterangeend2020-08-30t034657049zpagenumber1pagesize15sortascendingtruedisplaymodelistcalendardate-trainings)
   9. [Take a practice test](#9-take-a-practice-test)
-  10. [Take the Associate CSA exam](#10-take-the-associate-csa-exam)
+  10. [Take the Associate CSA exam](#10-take-the-associate-csa-examhttpsawsamazoncomcertificationcertified-solutions-architect-associate)
 
 ---
 
@@ -33,7 +33,7 @@ This is a free, online training course that covers the 100-level basics of AWS. 
 
 #### 2. Make an [AWS account](https://aws.amazon.com/free/) and explore the console
 
-Make your own AWS account! One of the most helpful things for me has been getting out of training content and getting into the console to build something for myself. Making something that takes some creativity makes what I'm learning stick with me. I started out by creating static websites - essentially websites that just display the contents of an HTML file. This only takes two services - S3 to store the HTML file and Route 53 for the URL domain name.
+Make your own AWS account! One of the most helpful things for me has been getting out of training content and getting into the console to build something for myself. Making something that takes some creativity makes what I'm learning stick with me. I started out by creating static websites - essentially a website that just displays the contents of an HTML file. This only takes two services - S3 to store the HTML file and Route 53 for the domain name and website URL.
 
 - [Upload a file to S3](https://aws.amazon.com/getting-started/tutorials/backup-files-to-amazon-s3/)
 - [Register a Route 53 domain](https://aws.amazon.com/getting-started/tutorials/get-a-domain/)
@@ -43,7 +43,7 @@ Make your own AWS account! One of the most helpful things for me has been gettin
 
 At this point, you should feel ready to take the AWS Certified Cloud Practitioner exam. You can now [take the exam from home](https://aws.amazon.com/blogs/apn/now-you-can-take-the-aws-certified-cloud-practitioner-exam-at-your-home-or-office-24-7/) - I wish that had been the case when I drove 3 hours to a flight school for a testing center! #dedication
 
-#### 4. Read/skim the [official study guide](https://www.amazon.com/Certified-Solutions-Architect-Study-Guide/dp/111950421X/ref=pd_lpo_sbs_14_t_0?_encoding=UTF8&psc=1&refRID=9Y5WJ0212S5JHTMXN9GC)
+#### 4. Read/skim the [official CSA study guide](https://www.amazon.com/Certified-Solutions-Architect-Study-Guide/dp/111950421X/ref=pd_lpo_sbs_14_t_0?_encoding=UTF8&psc=1&refRID=9Y5WJ0212S5JHTMXN9GC)
 
 I found the official study guide very useful, but more detailed than I could take in in its entirety. I read several chapters on services I was less versed in, like VPCs and RDS. There are also great practice questions and exams as part of the guide. 
 
@@ -57,13 +57,13 @@ Whitepapers are another good resource for getting caught up on specific topics. 
 
 #### 6. Study with [Linux Academy](https://linuxacademy.com/) or [A Cloud Guru](https://acloud.guru/)
 
-I used [Linux Academy](https://linuxacademy.com/) to help add some structure to what I was learning and hone in on the most important pieces of information. I made my own study guide following along with the Linux Academy videos and referring to the study guide or researching things I wanted to understand better. 
+I used [Linux Academy](https://linuxacademy.com/) to help add some structure to what I was learning and hone in on the most important pieces of information. I made my own study guide following along with the Linux Academy videos and referring to the [official study guide](#4-readskim-the-official-csa-study-guidehttpswwwamazoncomcertified-solutions-architect-study-guidedp111950421xrefpd_lpo_sbs_14_t_0_encodingutf8psc1refrid9y5wj0212s5jhtmxn9gc) or researching things I wanted to understand better. 
 
 I personally haven't used [A Cloud Guru](https://acloud.guru/), but I've heard good things from people who have!
 
 #### 7. Follow AWS tutorials for core services
 
-Get deeper into AWS services. These are some of the activities to try out at this point. For the Associate CSA exam, it's fine to just have experience with deploying AWS resources through the AWS console, as opposed to using the command line interface or CI/CD tooling.
+Get deeper into AWS services. These are some of the activities to try out at this point. For the Associate CSA exam, it's fine to just have experience deploying AWS resources by hand through the AWS console, as opposed to using the command line interface.
 
 - [Launch an EC2 instance](https://aws.amazon.com/getting-started/tutorials/launch-a-virtual-machine/)
 - [Create a Lambda function](https://aws.amazon.com/getting-started/tutorials/run-serverless-code/)
@@ -73,7 +73,7 @@ Get deeper into AWS services. These are some of the activities to try out at thi
 
 The [Exam Readiness](https://www.aws.training/Details/Curriculum?id=20685) course is either virtual (2 hours, free) or in a classroom (4 hours, paid). This course covers exam prep in detail, such as the the exam blueprint and types of questions to expect.
 
-The [Architecting on AWS](https://www.aws.training/training/schedule?courseId=10002&sortField=2&includeUnlisted=false&dateRangeStart=2019-08-30T03:46:57.048Z&dateRangeEnd=2020-08-30T03:46:57.049Z&pageNumber=1&pageSize=15&sortAscending=true&displaymode=list&calendardate=) course is paid, 3-day classroom course that covers the fundamentals and best practices of building on AWS. I took this one, which wasn't strictly test prep but helped me deepen my understanding of the concepts. 
+The [Architecting on AWS](https://www.aws.training/training/schedule?courseId=10002&sortField=2&includeUnlisted=false&dateRangeStart=2019-08-30T03:46:57.048Z&dateRangeEnd=2020-08-30T03:46:57.049Z&pageNumber=1&pageSize=15&sortAscending=true&displaymode=list&calendardate=) course is paid, 3-day classroom course that covers the fundamentals and best practices of building on AWS. I took this one (it's free for AWS employees), which wasn't strictly test prep but helped me deepen my understanding of the concepts.
 
 #### 9. Take a practice test
 
