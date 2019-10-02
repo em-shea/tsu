@@ -1,0 +1,50 @@
+---
+id: magic-search
+title: Magic: The Gathering card search
+category: Projects
+status: published
+preview: >
+
+---
+
+To start learning some Vue.js to expand what I can do easily with web frontends, I built a website that searches for and displays Magic: The Gathering cards.
+
+#### About the website
+
+Search by set and color, or by card name
+
+![Website screenshot - search by set](./chinese-vocab-app/haohaotiantian-screenshot.PNG)
+
+![Website screenshot - search by card name](./chinese-vocab-app/haohaotiantian-screenshot.PNG)
+
+Card layouts display effects
+
+#### How it's built
+
+The site is built as a single page web app built with Vue.js and Bootstrap. The static website is stored in S3 and served by CloudFront. Magic card data is requested from the [Scryfall API](link).
+
+Since I'm new to working in Vue, the structure is kept fairly simple. The Home view contains most of the core code, including for the search and page navigation header, with the logic for displaying cards broken out as a component.
+
+##### Search and navigation
+
+![Search and nav header screenshot](./chinese-vocab-app/haohaotiantian-screenshot.PNG)
+
+Random selection on load...
+
+Filtering set and mana color...
+
+Search by name...
+
+Query string parameters...
+
+Page navigation...
+
+##### Card display
+
+When cards are requested, the results are looped through to be formatted as cards. The first loop checks if the card is single-sided or two-sided. For two-sided cards, both card faces are set as card images and clicking on the card toggles which image is visible. For single-sided cards, the card layout is stored as a class. Card are assigned different CSS classes for the special layouts when clicked. For example, 'flip' layout cards will rotate updside down on click.
+
+#### What's next
+
+One thing that I would still like to add to the card search app is more advanced search and filter functionality, like filtering by card type (planeswalker, creature, sorcery, etc.) and keyword searches that display all cards that include that keyword.
+
+Magic cards are a super interesting data set to work with. I'm very interested in testing out machine learning with Magic cards. I've started [playing with text detection for cards](link), and I'm working on image recognition to be able to identify a card by the card art. Beyond card images, there's a world of interesting AI/ML applications, like what others have worked on for [drafting](https://towardsdatascience.com/teaching-an-ai-to-draft-magic-the-gathering-ba38b6a3d1f3) and [game play](https://hackernoon.com/machine-learning-magic-64a6a7f864d4).
