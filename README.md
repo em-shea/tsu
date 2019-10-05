@@ -3,7 +3,7 @@ Tsu :snowflake: is cloud native, open source blogging software designed with ext
 
 ## Tenets
 - Put learning first.
-  Our goal is come away with software we can both use as a learning tool to explore cloud native architectures and for its intended purpose (as blogging software).  
+  Our goal is come away with software we can both use as a learning tool to explore cloud native architectures and for its intended purpose (as blogging software).
 - Leverage cloud native architectures and tools.
 - Prioritize back-end developer experience.
 - Be opinionated in initial design choices while leaving space for maximum configurability and flexibility.

@@ -7,7 +7,7 @@ preview: >
   I built a website, mtg.emshea.com, that lets you search for Magic: The Gathering cards. This post will talk about how I built it using Vue.js.
 ---
 
-I built a website, [mtg.emshea.com](mtg.emshea.com), that lets you search for Magic: The Gathering cards. My goal for this project was to start learning Vue.js to expand what I can do with web frontends. This post will talk about how I built it using Vue.
+I built a website, [mtg.emshea.com](https://mtg.emshea.com), that lets you search for Magic: The Gathering cards. My goal for this project was to start learning Vue.js to expand what I can do with web frontends. This post will talk about how I built it using Vue.
 
 #### About the website
 
@@ -69,7 +69,7 @@ Within the component, cards are rendered conditionally based on card data. The f
 
 I would like to add more advanced filtering and search functionality, like filtering by card type (planeswalker, creature, sorcery, etc.) and keyword searches that display all cards that include that keyword.
 
-For future projects, I've started [playing with text detection for cards](https://twitter.com/em__shea/status/1176012640595742720?s=20), and I'm working on image recognition to be able to identify a card by the card art. Beyond card images, there's a world of interesting AI/ML applications with Magic, like what others have worked on for [drafting](https://towardsdatascience.com/teaching-an-ai-to-draft-magic-the-gathering-ba38b6a3d1f3) and [game play](https://hackernoon.com/machine-learning-magic-64a6a7f864d4).
+For future projects, I've started [playing with text detection for cards](https://twitter.com/em__shea/status/1176012640595742720?s=20), and I'm working on image recognition to be able to identify a card by the card art. Beyond card images, there's a world of interesting AI/ML applications with Magic, like what others have worked on for [drafting](https://towardsdatascience.com/teaching-an-ai-to-draft-magic-the-gathering-ba38b6a3d1f3), [deck optimization](https://hackernoon.com/machine-learning-magic-64a6a7f864d4), and [game play](https://towardsdatascience.com/monte-carlo-search-for-magic-the-gathering-6ca60750fcc6).
 
 ---
 
