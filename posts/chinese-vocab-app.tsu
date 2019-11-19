@@ -3,6 +3,7 @@ id: chinese-vocab-app
 title: Developing a daily Chinese vocab app
 category: Projects
 status: published
+published: 2019-08-19 12:00
 preview: >
   I built a web app for Chinese language learners to receive daily vocab words, Haohaotiantian.com. In this post, I'll give an overview of how the app works, how I developed it, and the serverless architecture behind it.
 ---

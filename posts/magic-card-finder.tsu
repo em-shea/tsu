@@ -3,6 +3,7 @@ id: magic-card-finder
 title: Magic: The Gathering card finder app
 category: Projects
 status: published
+published: 2019-10-05 12:00
 preview: >
   I built a website, mtg.emshea.com, that lets you search for Magic: The Gathering cards. This post will talk about how I built it using Vue.js.
 ---
