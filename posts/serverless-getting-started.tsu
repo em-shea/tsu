@@ -13,22 +13,24 @@ I learned best by starting small and steadily adding in more services and buildi
 
 Personally, I rarely follow a tutorial from beginning to end. I typically will refer to them for components and examples as I'm building something of my own. For each tutorial listed, I've included one of my own projects that uses the same concepts in the tutorial to provide you with ideas.
 
-Jump to:
+##### Jump to:
 
-1. Set up a static website served from S3
-2. Use your S3-hosted static website to interact with an external API
-3. Introduction to SAM, which you can use as a deployment framework for the rest of the examples:
-4. Build a Lambda that's triggered by a CloudWatch event
-5. Build a Lambda that's triggered by an API gateway request
-6. Build a Lambda/API Gateway app that sends messages to SES (or easily adapted for SNS)
-7. Build a Lambda that writes to DynamoDB
+1. [Set up a static website served from S3](#1-set-up-a-static-website-served-from-s3)
+2. [Use your S3-hosted static website to interact with an external API](#2-use-your-s3-hosted-static-website-to-interact-with-an-external-api)
+3. [Introduction to the Serverless Application Model (SAM) deployment framework]
+4. [Build a Lambda that's invoked by a CloudWatch event]
+5. [Build a Lambda that's invoked by an API gateway request]
+6. [Build a Lambda/API Gateway app that sends messages to SES/SNS]
+7. [Build a Lambda that writes to DynamoDB]
 
-Tutorials & examples
+---
 
-1. Set up a static website served from S3 (with or without a custom domain)
-https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html
-Example project: You can host a static website as simple as a little HTML and a message, like in the tutorial:
+#### 1. Set up a static website served from S3
+- Tutorial: [Setting Up a Static Website Using a Custom Domain](https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html)
+- Example project:
+  - You can host a static website that's just a few lines of HTML, like in the tutorial:
 
+```
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
     <title>My Website Home Page</title>
@@ -38,34 +40,42 @@ Example project: You can host a static website as simple as a little HTML and a 
   <p>Now hosted on Amazon S3!</p>
 </body>
 </html>
+```
 
-For something more creative, here's a Tarot card reader I made for fun using interactive fiction software Twine: http://tarot.emshea.com/
-You can export stories in Twine as HTML and host it just like in the tutorial above. Here is the static HTML file that's serving this site: https://github.com/em-shea/tarot/blob/master/Tarot.html
+For something more creative, here's a [Tarot card reader](http://tarot.emshea.com/) I made for fun using interactive fiction software [Twine](https://twinery.org/). You can export stories in Twine as HTML and host it just like in the tutorial above. Here is the [static HTML file](https://github.com/em-shea/tarot/blob/master/Tarot.html) that's serving this site.
 
-2. Use your S3-hosted static website to interact with an external API
-General tutorial on how to connect with an external API: https://www.taniarascia.com/how-to-connect-to-an-api-with-javascript/
-Example project: http://mtg.emshea.com/
+#### 2. Use your S3-hosted static website to interact with an external API
+- Tutorial: [How to Connect to an API with JavaScript](https://www.taniarascia.com/how-to-connect-to-an-api-with-javascript/)
+  - This tutorial covers the basics of working with an external API. As someone with limited experience with APIs, I found it useful to first practice working with an existing API before building and working with my own API.
+- Example project: 
+  - [Magic card finder](http://mtg.emshea.com/), which pulls card data from the [Scryfall Magic API](https://scryfall.com/).
 
-3. Introduction to SAM, which you can use as a deployment framework for the rest of the examples:
-https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html
+#### 3. Introduction to the Serverless Application Model (SAM) deployment framework
+Now is a good time to start learning a serverless deployment framework like SAM, which can be used to deploy the rest of the projects.
 
-4. Build a Lambda that's triggered by a CloudWatch event
-https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/RunLambdaSchedule.html
-SAM template example: https://docs.aws.amazon.com/lambda/latest/dg/with-scheduledevents-example-use-app-spec.html
-Example project: https://emshea.com/post/chinese-vocab-app#development-process
-The first architecture of the daily vocab app.
+- Tutorial: [Deploying a Hello World Application with SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html)
 
-5. Build a Lambda that's triggered by an API gateway request
-https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html
-Example project: https://hello.emshea.com/
-https://hello.emshea.com/?l=London
+#### 5. Build a Lambda that's invoked by an API gateway request
+- Tutorial: [Build a Hello World API with Lambda Proxy Integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html)
+- Example project: 
+  - A [random greeting generator](https://hello.emshea.com/) that also shows the weather.
+  - It accepts query string parameters to show the weather for any location - [London](https://hello.emshea.com/?l=London), [Tokyo](https://hello.emshea.com/?l=Tokyo)
+  - [Source code](https://github.com/em-shea/hello-lambda). The Lambda function is invoked by API Gateway when a user hits the page. The function pulls the random greeting from S3, calls the weather API, and generates the page HTML.
 
-6. Build a Lambda/API Gateway app that sends messages to SES (or easily adapted for SNS)
+#### 4. Build a Lambda that's invoked by a CloudWatch event
+You can set a CloudWatch event to invoke your Lambda function on a schedule, like once a day or once a minute.
+- Tutorial: [Schedule AWS Lambda Functions Using CloudWatch Events](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/RunLambdaSchedule.html)
+  - [Example SAM template](https://docs.aws.amazon.com/lambda/latest/dg/with-scheduledevents-example-use-app-spec.html)
+- Example project: 
+  - A simple Architectural diagram https://emshea.com/post/chinese-vocab-app#development-process
+  - This and the next three example projects are building up and adding features to the same web app project. 
+
+#### 6. Build a Lambda/API Gateway app that sends messages to SES (or easily adapted for SNS)
 https://aws.amazon.com/blogs/architecture/create-dynamic-contact-forms-for-s3-static-websites-using-aws-lambda-amazon-api-gateway-and-amazon-ses/
 Example project: https://emshea.com/post/chinese-vocab-app#how-it-works
 The later version of the daily vocab app
 
-7. Build a Lambda that writes to DynamoDB
+#### 7. Build a Lambda that writes to DynamoDB
 https://ordina-jworks.github.io/cloud/2018/10/01/How-to-build-a-Serverless-Application-with-AWS-Lambda-and-DynamoDB.html
 Example project: Currently in progress for the daily vocab app
 - Created a DynamoDB table: https://github.com/em-shea/vocab/blob/master/template.yaml#L185
