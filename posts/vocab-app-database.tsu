@@ -1,0 +1,72 @@
+---
+id: vocab-app-database
+title: Adding DynamoDB as my Chinese vocab app database
+category: Projects
+status: draft
+preview: >
+  I added a DynamoDB database to my existing daily Chinese vocab app. Here I'll share how I designed and implemented it, including the SAM template I used to define my database, my data structure, and how I integrated it in my Lambda-based application.
+---
+
+I added a DynamoDB database to my existing daily Chinese vocab app (learn more about the existing app design here). Here I'll share how I designed and implemented it, including the SAM template I used to define my database, the data structure, and how I integrated it in my Lambda-based application.
+
+- Use case
+- Defining the database
+- Data structure
+- App integration
+  - Writing to database
+  - API to read from the database
+  - UI
+
+#### Use case
+
+My Chinese vocab app sends an email with a vocab word to subscribers daily. The words are pulled at random from a word list. In order to keep a record of which words subscribers saw each day and provide functionality for reviewing vocab, I need to store the daily words being sent out. I'll be creating a database, adding code to my Lambda functions to write to the database, and providing a Lambda-backed API and user interface for subscribers to review past words.
+
+I'm using DynamoDB for this project since it's low maintenance (both managed and serverless) and was easy to get started with for someone without any previous database experience.
+
+#### Defining the database
+
+First, let's walk through how I defined my database in my SAM template. The full application template is here.
+
+```
+DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName: !Sub DailyWordHistory-${Stage}
+```
+I have deletion policy set to retain so that if I delete my CloudFormation stack, the database won't also be deleted. See this post on my CI/CD pipeline for how I set
+
+```
+
+      AttributeDefinitions:
+        - AttributeName: ListId
+          AttributeType: S
+        - AttributeName: Date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ListId
+          KeyType: HASH
+        - AttributeName: Date
+          KeyType: RANGE
+```
+
+AttributeDefinitions defines the types of data that will be stored in the partition and sort key, which combine to form the primary key. You need to provide an attribute definition for every key in your KeySchema.
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey
+
+KeySchema defines the database keys and which is the hash and the range key.
+
+```
+      BillingMode: PAY_PER_REQUEST
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+```
+
+I chose pay-per-request (also called on-demand) capacity billing mode and set provisioned throughput to 0. Alternatively, you could
+There is also a provisioned throughput/capacity mode. Provisioned throughput
+
+#### Data structure
+
+#### App integration
+
+🌻

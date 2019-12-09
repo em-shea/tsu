@@ -47,7 +47,7 @@ For something more creative, here's a [Tarot card reader](http://tarot.emshea.co
 #### 2. Use your S3-hosted static website to interact with an external API
 - Tutorial: [How to Connect to an API with JavaScript](https://www.taniarascia.com/how-to-connect-to-an-api-with-javascript/)
   - This tutorial covers the basics of working with an external API. As someone with limited experience with APIs, I found it useful to first practice working with an existing API before building and working with my own API.
-- Example project: 
+- Example project:
   - [Magic card finder](http://mtg.emshea.com/), which pulls card data from the [Scryfall Magic API](https://scryfall.com/).
 
 #### 3. Introduction to the Serverless Application Model (SAM) deployment framework
@@ -57,7 +57,7 @@ Now is a good time to start learning a serverless deployment framework like SAM,
 
 #### 5. Build a Lambda that's invoked by an API gateway request
 - Tutorial: [Build a Hello World API with Lambda Proxy Integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html)
-- Example project: 
+- Example project:
   - A [random greeting generator](https://hello.emshea.com/) that also shows the weather.
   - It accepts query string parameters to show the weather for any location - [London](https://hello.emshea.com/?l=London), [Tokyo](https://hello.emshea.com/?l=Tokyo)
   - [Source code](https://github.com/em-shea/hello-lambda). The Lambda function is invoked by API Gateway when a user hits the page. The function pulls the random greeting from S3, calls the weather API, and generates the page HTML.
@@ -66,9 +66,9 @@ Now is a good time to start learning a serverless deployment framework like SAM,
 You can set a CloudWatch event to invoke your Lambda function on a schedule, like once a day or once a minute.
 - Tutorial: [Schedule AWS Lambda Functions Using CloudWatch Events](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/RunLambdaSchedule.html)
   - [Example SAM template](https://docs.aws.amazon.com/lambda/latest/dg/with-scheduledevents-example-use-app-spec.html)
-- Example project: 
+- Example project:
   - A simple Architectural diagram https://emshea.com/post/chinese-vocab-app#development-process
-  - This and the next three example projects are building up and adding features to the same web app project. 
+  - This and the next three example projects are building up and adding features to the same web app project.
 
 #### 6. Build a Lambda/API Gateway app that sends messages to SES (or easily adapted for SNS)
 https://aws.amazon.com/blogs/architecture/create-dynamic-contact-forms-for-s3-static-websites-using-aws-lambda-amazon-api-gateway-and-amazon-ses/
@@ -77,6 +77,7 @@ The later version of the daily vocab app
 
 #### 7. Build a Lambda that writes to DynamoDB
 https://ordina-jworks.github.io/cloud/2018/10/01/How-to-build-a-Serverless-Application-with-AWS-Lambda-and-DynamoDB.html
+Additional resources: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html
 Example project: Currently in progress for the daily vocab app
 - Created a DynamoDB table: https://github.com/em-shea/vocab/blob/master/template.yaml#L185
 - Added code to the send daily campaign function to write to Dynamo: https://github.com/em-shea/vocab/blob/master/SendDailyCampaign/SendDailyCampaign.py#L40
