@@ -4,10 +4,10 @@ title: Adding DynamoDB as my Chinese vocab app database
 category: Projects
 status: draft
 preview: >
-  I added a DynamoDB database to my existing daily Chinese vocab app. Here I'll share how I designed and implemented it, including the SAM template I used to define my database, my data structure, and how I integrated it in my Lambda-based application.
+  I added a DynamoDB database to my daily Chinese vocab app. Here I'll share how I designed and implemented it, including the SAM template I used to define my database, my data structure, and how I integrated it in my Lambda-based application.
 ---
 
-I added a DynamoDB database to my existing daily Chinese vocab app (learn more about the existing app design here). Here I'll share how I designed and implemented it, including the SAM template I used to define my database, the data structure, and how I integrated it in my Lambda-based application.
+I added a DynamoDB database to my daily Chinese vocab app (learn more about the existing app design here). Here I'll share how I designed and implemented it, including the SAM template I used to define my database, the data structure, and how I integrated it in my Lambda-based application.
 
 - Use case
 - Defining the database
@@ -34,10 +34,10 @@ DynamoDBTable:
     Properties:
       TableName: !Sub DailyWordHistory-${Stage}
 ```
-I have deletion policy set to retain so that if I delete my CloudFormation stack, the database won't also be deleted. See this post on my CI/CD pipeline for how I set
+
+I have deletion policy set to retain so that if I delete my CloudFormation stack, the database won't also be deleted. My SAM deploy command includes a variable for ${Stage} to create 'stage' and 'prod' versions of the database.
 
 ```
-
       AttributeDefinitions:
         - AttributeName: ListId
           AttributeType: S
@@ -50,10 +50,9 @@ I have deletion policy set to retain so that if I delete my CloudFormation stack
           KeyType: RANGE
 ```
 
-AttributeDefinitions defines the types of data that will be stored in the partition and sort key, which combine to form the primary key. You need to provide an attribute definition for every key in your KeySchema.
-https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey
+For a good introduction on how to set up AttributeDefinitions and KeySchema, this [DynamoDB Core Components](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents) was a great quick introduction.
 
-KeySchema defines the database keys and which is the hash and the range key.
+AttributeDefinitions defines the types of data that will be stored in the partition and sort key (both of mine are strings, or 'S'), which combine to form the primary key. You need to provide an attribute definition for every key in your KeySchema. KeySchema defines the database keys and which is the hash and the range key.
 
 ```
       BillingMode: PAY_PER_REQUEST
@@ -67,6 +66,17 @@ There is also a provisioned throughput/capacity mode. Provisioned throughput
 
 #### Data structure
 
+I send the same vocab word data that
+
+Image of example word
+![Example data structure](./vocab-app-database/example-data-structure.png)
+
 #### App integration
+
+Architecture diagram
+![Architecture diagram](./vocab-app-database/vocab-app-v4-highlight.PNG)(maxwidth=550px)
+
+Lambda backing up word history API
+[DailyWordHistory repo](https://github.com/em-shea/vocab/blob/master/DailyWordHistory/DailyWordHistory.py)
 
 🌻

@@ -1,0 +1,9 @@
+---
+id: simple-serverless-cicd
+title: A Simple CI/CD Pipeline for Serverless Apps
+category: Tooling
+published: 2019-08-30 12:00
+preview: >
+  For deploying my applications, I have a simple deployment pipeline that uses GitHub, SAM, and Circle CI.
+---
+
