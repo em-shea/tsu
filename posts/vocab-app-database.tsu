@@ -1,31 +1,25 @@
 ---
 id: vocab-app-database
-title: Adding DynamoDB as my Chinese vocab app database
+title: Integrating DynamoDB in my Chinese vocab app
 category: Projects
 status: draft
 preview: >
-  I added a DynamoDB database to my daily Chinese vocab app. Here I'll share how I designed and implemented it, including the SAM template I used to define my database, my data structure, and how I integrated it in my Lambda-based application.
+  In my daily Chinese vocab app, I built the ability for users to review past daily words by adding a database. Here I'll share how I designed and implemented my DynamoDB table, including the SAM template I used to define the table, my data structure, and how I integrated it in my Lambda-based application.
 ---
 
-I added a DynamoDB database to my daily Chinese vocab app (learn more about the existing app design here). Here I'll share how I designed and implemented it, including the SAM template I used to define my database, the data structure, and how I integrated it in my Lambda-based application.
+In my [daily Chinese vocab app](https://emshea.com/post/chinese-vocab-app), I built the ability for users to review past daily words by adding a database. The app sends an email with a vocab word to subscribers daily. The words are pulled at random from one of 6 levels of vocab word lists. In order to keep a record of which words subscribers saw each day and allow users to review vocab, I need to add a database to store the daily words being sent out.
 
-- Use case
-- Defining the database
-- Data structure
-- App integration
-  - Writing to database
-  - API to read from the database
-  - UI
+Here I'll share how I designed and implemented my DynamoDB table, including the SAM template I used to define the table, my data structure, and how I integrated it in my Lambda-based application.
 
-#### Use case
+##### Jump to:
 
-My Chinese vocab app sends an email with a vocab word to subscribers daily. The words are pulled at random from a word list. In order to keep a record of which words subscribers saw each day and provide functionality for reviewing vocab, I need to store the daily words being sent out. I'll be creating a database, adding code to my Lambda functions to write to the database, and providing a Lambda-backed API and user interface for subscribers to review past words.
+- [Defining the database table](#defining-the-database-table)
+- [Data structure](#data-structure)
+- [Application integration](#application-integration)
 
-I'm using DynamoDB for this project since it's low maintenance (both managed and serverless) and was easy to get started with for someone without any previous database experience.
+#### Defining the database table
 
-#### Defining the database
-
-First, let's walk through how I defined my database in my SAM template. The full application template is here.
+First, let's walk through the SAM template for defining the database table. The SAM template for the full application is [here](https://github.com/em-shea/vocab/blob/f51cb6061ca7679a56e2ddada16de89354adb1b0/template.yaml).
 
 ```
 DynamoDBTable:
@@ -33,50 +27,69 @@ DynamoDBTable:
     DeletionPolicy: Retain
     Properties:
       TableName: !Sub DailyWordHistory-${Stage}
+# cont'd below...
 ```
 
-I have deletion policy set to retain so that if I delete my CloudFormation stack, the database won't also be deleted. My SAM deploy command includes a variable for ${Stage} to create 'stage' and 'prod' versions of the database.
+I have deletion policy set to retain so that if I delete my CloudFormation stack, the table won't also be deleted.
+
+To name the table, my SAM deploy command includes a variable for ${Stage} and will create 'stage' and 'prod' versions of the table.
 
 ```
-      AttributeDefinitions:
-        - AttributeName: ListId
-          AttributeType: S
-        - AttributeName: Date
-          AttributeType: S
+# cont'd...
       KeySchema:
         - AttributeName: ListId
           KeyType: HASH
         - AttributeName: Date
           KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: ListId
+          AttributeType: S
+        - AttributeName: Date
+          AttributeType: S
+# cont'd below...
 ```
 
-For a good introduction on how to set up AttributeDefinitions and KeySchema, this [DynamoDB Core Components](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents) was a great quick introduction.
+This is where we define the unique primary key for each item in the database table. For a quick introduction on key schema concepts, the [DynamoDB Core Components docs](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents) was helpful.
 
-AttributeDefinitions defines the types of data that will be stored in the partition and sort key (both of mine are strings, or 'S'), which combine to form the primary key. You need to provide an attribute definition for every key in your KeySchema. KeySchema defines the database keys and which is the hash and the range key.
+KeySchema defines the unique primary key for each item and sets which is the partition/hash key and which is the sort/range key. My partition key is the HSK Level list ID ("HSKLevel1") and sort key is the date.
+
+AttributeDefinitions defines the types of data that will be stored in the partition and sort key (both of mine are strings, or 'S'), which combine to form a composite primary key. You need to provide an attribute definition for each key in your KeySchema.
 
 ```
+# cont'd...
       BillingMode: PAY_PER_REQUEST
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
 ```
 
-I chose pay-per-request (also called on-demand) capacity billing mode and set provisioned throughput to 0. Alternatively, you could
-There is also a provisioned throughput/capacity mode. Provisioned throughput
+For billing mode, I chose pay-per-request, also called on-demand (and set provisioned throughput to 0). Alternatively, you could set billing mode to 'PROVISIONED' and specify provisioned throughput units. 25 read and 25 write capacity units are within the [AWS free tier](https://aws.amazon.com/dynamodb/pricing/provisioned/). At the scale of my project, on-demand should cost something like $0.00025/mo (or essentially free).
 
 #### Data structure
 
-I send the same vocab word data that
+Each item in my database table is a vocab word that has been sent to users. With just a few lines of code, I can write the word to DynamoDB in the same function that sends the daily email. That function already contains a "word" dictionary that holds the daily word, definition, pronunciation, and HSK level integer.
 
-Image of example word
+I'm adding two additional attributes to record the date the word was sent and HSK level list name ("HSKLevel1").
+
 ![Example data structure](./vocab-app-database/example-data-structure.png)
 
-#### App integration
+If I was starting over, I would unpack the "word" dictionary and store each item at the same level in the table for easier access.
 
-Architecture diagram
-![Architecture diagram](./vocab-app-database/vocab-app-v4-highlight.PNG)(maxwidth=550px)
+#### Application integration
 
-Lambda backing up word history API
-[DailyWordHistory repo](https://github.com/em-shea/vocab/blob/master/DailyWordHistory/DailyWordHistory.py)
+To use the database table in the application, I needed to:
+
+1. Add code in the Lambda function that sends daily emails to also write the daily words to DynamoDB ([function code](https://github.com/em-shea/vocab/blob/f51cb6061ca7679a56e2ddada16de89354adb1b0/SendDailyCampaign/SendDailyCampaign.py#L72)).
+
+2. Create an API endpoint and a Lambda function that returns the daily word history for each HSK level ([SAM template](https://github.com/em-shea/vocab/blob/f51cb6061ca7679a56e2ddada16de89354adb1b0/template.yaml#L100), [function code](https://github.com/em-shea/vocab/blob/master/DailyWordHistory/DailyWordHistory.py)).
+
+    Check out the API endpoint [here](https://api.haohaotiantian.com/history?list=HSKLevel3&date_range=30). It accepts query string parameters for the HSK level and date range (ex, HSK level 3 words over the past 30 days). If no parameters are passed, the endpoint will return the 8 most recent words for all 6 HSK levels.
+
+    ![Architecture diagram](./vocab-app-database/vocab-app-v4-highlight.PNG)(maxwidth=550px)
+
+3. Build a user interface to surface API results ([Vue.js code](https://github.com/em-shea/vocab-frontend-vue)).
+
+    ![Screenshot](./vocab-app-database/word-history-screenshot.PNG)
+
 
 🌻
