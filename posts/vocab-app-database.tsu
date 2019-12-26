@@ -2,7 +2,7 @@
 id: vocab-app-database
 title: Integrating DynamoDB in my Chinese vocab app
 category: Projects
-status: draft
+status: published
 preview: >
   In my daily Chinese vocab app, I built the ability for users to review past daily words by adding a database. Here I'll share how I designed and implemented my DynamoDB table, including the SAM template I used to define the table, my data structure, and how I integrated it in my Lambda-based application.
 ---
