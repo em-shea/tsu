@@ -71,7 +71,7 @@ Each item in my database table is a vocab word that has been sent to users. With
 
 I'm adding two additional attributes to record the date the word was sent and HSK level list name ("HSKLevel1").
 
-![Example data structure](./vocab-app-database/example-data-structure.png)
+![Example data structure](./vocab-app-database/example-data-structure-large.png)
 
 If I was starting over, I would unpack the "word" dictionary and store each item at the same level in the table for easier access.
 
