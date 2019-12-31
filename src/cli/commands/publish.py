@@ -7,7 +7,7 @@ import yaml
 import re
 import os
 
-from PIL import Image
+from PIL import Image, ExifTags
 from resizeimage import resizeimage
 
 from commands.base import TsuCommand
@@ -78,6 +78,24 @@ class PublishCmd(TsuCommand):
 
         with open(os.path.normpath(os.path.join(relative_dir, image_path)), 'r+b') as f:
             with Image.open(f) as image:
+                image_format = image.format
+
+                if hasattr(image, '_getexif'): # only present in JPEGs
+                    for key in ExifTags.TAGS.keys():
+                        if ExifTags.TAGS[key] == 'Orientation': 
+                            break 
+
+                    e = image._getexif()       # returns None if no EXIF data
+                    if e is not None:
+                        exif=dict(e.items())
+
+                        if exif[key] == 3 : 
+                            image = image.rotate(180, expand=True)
+                        elif exif[key] == 6 : 
+                            image = image.rotate(270, expand=True)
+                        elif exif[key] == 8 : 
+                            image = image.rotate(90, expand=True)
+
                 for size in sizes:
                     # If size is None then we are keeping the original resolution
                     image_sized_path = os.path.join('static/','images/', image_path)
@@ -93,10 +111,10 @@ class PublishCmd(TsuCommand):
 
                     # Save the image to a byte array and upload to S3
                     imgByteArr = BytesIO()
-                    image_sized.save(imgByteArr, image.format)
+                    image_sized.save(imgByteArr, image_format)
                     imgByteArr.seek(0)
 
-                    cdn_bucket.upload_fileobj(imgByteArr, image_sized_path, ExtraArgs={'ACL':'public-read', 'ContentType': Image.MIME[image_sized.format]})
+                    cdn_bucket.upload_fileobj(imgByteArr, image_sized_path, ExtraArgs={'ACL':'public-read', 'ContentType': Image.MIME[image_format]})
                     images.append((f'/{image_sized_path}', size))
 
         return images
