@@ -5,61 +5,25 @@ category: Personal
 status: published
 published: 2019-08-19 12:00
 preview: >
-  It's the end of 2019, and I'm wrapping up an incredible first full year in the tech industry.
+  Subtitle
 ---
 
-It's the end of 2019, and I'm wrapping up an incredible first full year in the tech industry.
+We have until end of January to write our year end lookback posts, right? Just me? I've written a few drafts but it hasn't come together the way I wanted until now. There's a lot to reflect on in 2019.
 
-I can't say enough about the serverless community overall, but I wanted to thank a few of the people who have helped review posts, amplify content, or otherwise helped me get started early on - [Heitor Lessa](https://twitter.com/heitor_lessa), [Richard Boyd](https://twitter.com/rchrdbyd), & [Mike Deck](https://twitter.com/mikedeck). And thanks to everyone who I've gotten to connect with on Twitter or in real life!
+It's been an incredible first full year in the tech industry (I moved from Amazon.com retail to AWS in late 2018). I put in a lot of hard work this year, and so many things have materialized beyond my expectations. Thank you to everyone who has encouraged me, and special thanks to Heitor Lessa, Mike Deck, and Richard Boyd who went out of their way to help me early on - from reading blog drafts to connecting me with the serverless community early on.
 
-Here are a few highlights from my personal projects and within my role at AWS, finished off with a few of my favorite travel photos from this year.
+I started the year passing my Associate Solutions Architect certification, which was highly daunting when I first picked up the book but worth the effort. The foundation of broad, 100 level understanding of core AWS services serves me well day-to-day.
 
-##### Jump to:
+My development skills have grown significantly. Python feels very comfortable, and my Javascript still comes out Pythonic on the first attempt but it's steadily getting better. Importantly my ability to debug has improved, and I enjoy programming much more now that I get hopelessly stuck less often.
 
-- [Programming](#programming)
-- [Building](#building)
-- [People](#people)
-- [Travel](#travel)
+I've definitely caught the bug of enjoying building apps. In 2018 I was plunking through tutorials or making amusing but fairly useless static HTML webpages. Haohaotiantian is my first complex user-facing application and the process has been so cool. It's grown from a single Lambda function and an SNS topic with me as the lone subscriber, to a fully functional service with a front-end (Vue.js is 🔥), a datastore, multiple APIs, and 70 subscribers! I have more features I want to add, but I'm happy with how far it's come this year.
 
-#### Programming
+Not quite as practically useful, but I loved building mtg.emshea.com.
 
-My programming practice has progressed significantly. Throughout 2018, I worked through Codeacademy for Python and a bit of Javascript and started programming in earnest in August 2018 (per GitHub). This year, I got much more comfortable in Python and started building front-end development experience in Javascript. I spent a fair amount of time learning Vue.js, which has made it much easier to build complex front-ends.
+I had an awesome time at Serverlessconf and re:Invent this year and got to meet so many coworkers, AWS partners, and friends from Twitter. I gave my first conference talk at the re:Invent Global Partners Summit. I spoke about how we see AWS partners delivering more value for their customers by building serverless.
 
-My Javascript comes out a little Pythonic at times, but in both I'm able to code more and find myself getting stuck less often. Getting better at debugging and troubleshooting has made coding much more enjoyable.
+2019 was challenging in the best way and I can't believe how much I've learned. Judging by the first month, I expect no less of 2020.
 
-#### Building
+Favorite travel photos:
 
-This year I built my first substantial projects - the largest and most useful being [haohaotiantian.com](https://haohaotiantian.com/), daily Chinese vocab app, and a [Magic card finder app](https://mtg.emshea.com/) for fun.
-
-The Magic app was helpful to start experimenting with using an external API and build an attractive UI with Vue.js and Bootstrap. Haohaotiantian has been a cool project to grow over time, from a single Lambda and SNS topic for myself to a public app with users. I've gotten to build in new technologies over time, like adding DynamoDB for users to be able to review past words.
-
-  - Motivation
-  - Expanding projects
-  - Engagement
-
-#### People
-
-I got the chance to go to Serverlessconf in New York and re:Invent this year.
-
-  - Serverlessconf
-  - re:Invent
-
-<iframe width="560" height="315" style="height: 315px" src="https://www.youtube.com/embed/FMwbaDsv8qU?start=736" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-
-I put in *a lot* of work last year and this year to get here, and had the most fun of my career learning, building, and meeting people in the AWS and serverless communities. In the second half of 2019, I've seen a lot of things come together way better than I could have imagined - including this blog.
-
-#### Travel
-
-Exploring the partially restored Huanghuacheng section of the Great Wall (March, 2019).
-
-<img style="transform: rotate(90deg)" src="/static/images/2019-review/great-wall.JPG">
-![Sitting on the Great Wall](./2019-review/great-wall.JPG)
-
-Hiking at Yangmingshan National Park (May, 2019).
-
-![Hiking](./2019-review/yangmingshan.jpg)
-
-  - Beijing
-  - Shanghai, Taiwan, Suzhou
-  - Flagstaff
+Favorite books of 2019:
