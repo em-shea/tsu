@@ -15,11 +15,11 @@ Tsu :snowflake: is cloud native, open source blogging software designed with ext
 
 # Dev Commands
 (`tsu.bat` instead of `./tsu` to call CLI tool on Windows)
-- `./tsu publish posts\vocab-app-launch.tsu` to publish post
+- `./tsu publish posts/vocab-app-launch.tsu` to publish post
 - `./tsu deploy` after updating template/code
 
 # Prod Commands
-- `./tsu -s prod publish posts\vocab-app-launch.tsu` to publish post
+- `./tsu -s prod publish posts/vocab-app-launch.tsu` to publish post
 - `./tsu -s prod deploy` after updting template/code
 
 ## Getting Started
