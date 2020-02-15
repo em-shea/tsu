@@ -11,6 +11,8 @@ jobs:
           name: Install dependencies
           command: sudo npm install -g serverless
 
+      - setup_remote_docker
+      
       # - run:
       #     name: Install awscli
       #     command: sudo pip install awscli
