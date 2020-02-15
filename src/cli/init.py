@@ -36,5 +36,5 @@ if __name__ == "__main__":
     else:
         execute([path('venv/bin/pip'), 'install', '-r', path('requirements-dev.txt')])
 
-    print("- Installing NodeJS requirements")
+    print("- Installing NodeJS requirements", path('/'))
     execute(['npm', 'install'], cwd=path('/'))
