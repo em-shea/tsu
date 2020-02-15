@@ -21,7 +21,7 @@ class DeployCmd(TsuCommand):
         if os.name != 'nt':
             additional_args.extend(['--reqcache', 'true'])
 
-        self.execute(['sls', 'deploy', *additional_args])
+        self.execute(['sls', 'deploy', *additional_args], cwd=self.path('.'))
 
     def sync_static(self, args):
         print("Syncing s3 assets...")
@@ -30,4 +30,4 @@ class DeployCmd(TsuCommand):
         if args.stage:
             additional_args.extend(['--stage', args.stage])
 
-        self.execute(['sls', 's3sync', *additional_args])
+        self.execute(['sls', 's3sync', *additional_args], cwd=self.path('.'))
