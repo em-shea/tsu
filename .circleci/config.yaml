@@ -12,10 +12,6 @@ jobs:
           command: npm install
 
       # - run:
-      #     name: Vue build
-      #     command: npm run build
-
-      # - run:
       #     name: Install awscli
       #     command: sudo pip install awscli
 
