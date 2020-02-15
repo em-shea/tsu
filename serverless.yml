@@ -4,7 +4,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   false: false
   pythonRequirements:
-    dockerizePip: false
+    dockerizePip: true
     useDownloadCache: ${opt:reqcache, self:custom.false}
     useStaticCache: ${opt:reqcache, self:custom.false}
   s3Sync:
