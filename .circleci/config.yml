@@ -20,6 +20,7 @@ jobs:
       - run:
           name: Copy files to S3
           command: |
+            export SLS_DEBUG=*
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ./tsu -s prod deploy
             fi
