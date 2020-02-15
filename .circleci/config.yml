@@ -22,5 +22,5 @@ jobs:
               ./tsu -s prod deploy
             fi
             if [ "${CIRCLE_BRANCH}" == "staging" ]; then
-              ./tsu -s default deploy
+              ./tsu -s dev deploy
             fi
