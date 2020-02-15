@@ -24,7 +24,7 @@ custom:
 
 provider:
   name: aws
-  runtime: python3.6
+  runtime: python3
   stage: dev
   versionFunctions: falsei
   iamRoleStatements:
