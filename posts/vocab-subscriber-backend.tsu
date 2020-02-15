@@ -12,20 +12,10 @@ I recently migrated a few core components of my [daily Chinese vocab app](https:
 
 ##### Jump to:
 
-- [Architecture before & after](#archiecture-before-&-after)
 - [Why build my own backend](#why-build-my-own-backend)
-- [How is it built](#how-is-it-built)
+- [Architecture before](#architecture-before)
+- [Architecture after](#architecture-after)
 - [What I learned](#what-i-learned)
-
-#### Architecture before & after
-
-My architecture before:
-
-![Architecture diagram before migration](./vocab-subscriber-backend/vocab-app-v5-before.png)(maxwidth=900px)
-
-... and after:
-
-![Architecture diagram after migration](./vocab-subscriber-backend/vocab-app-v5-after.png)(maxwidth=900px)
 
 #### Why build my own backend
 
@@ -33,25 +23,44 @@ When I began building my daily vocab service out into a public application, I us
 
 Now that my app is more mature, I decided to build my own backend. The first motivation was reducing costs. SendGrid's free tier is 100 emails a day, and my current subscriber count is up to 70 (🎉). SendGrid's first paid tier is $15/mo., which was steep for my level of usage, whereas my new architecture is still well within the AWS free tier.
 
-Another factor was increasing my ability to add more custom logic into the emails I'm sending. I shared my app with the r/ChineseLanguage community on Reddit, which is where the latest subscribers came from. I got a few requests to support traditional Chinese characters in addition to simplified. I'll be releasing traditional support shortly. It was easy with my own backend - some slight tweaks to my contact list data structure and adding in some if statements ('if subscribed to traditional... if subscribed to simplified...') into my functions that compose emails.
+Another factor was increasing my ability to add more custom logic into my backend. When I thought about features that I wanted to add to my app, I was beginning to feel restricted by needing to fit into SendGrid's model. 
 
-#### How is it built
+For example, SendGrid email workflows are divided into 'marketing' and 'transactional' emails, neither of which 100% fit my use case. With the marketing model, I could group users into contact lists by the vocab level they subscribed to, but I needed the transactional email functionality of dynamically substituting in email content (ie, [handlebars](https://sendgrid.com/docs/for-developers/sending-email/using-handlebars/)). I created a workaround to be able to use a bit of both (I used SendGrid marketing contact lists, but I packaged my email templates within the Lambda function zip files so I could manipulate them, as opposed to using SendGrid's template management), but I could see my SendGrid integration getting more hacky over time.
 
-Previously, I had a **subscribe** API endpoint and Lambda function that posted to SendGrid's subscribe API. Within SendGrid, I created prod and staging contact lists for each of the 6 vocab levels. I had the SendGrid contact list IDs for each of these lists in a CSV in S3. Both my subscribe and send email functions needed contact list IDs, so I packaged this code in a Lambda Layer. I used the contact list IDs when calling SendGrid's API to subscribe a new user.
+**A new feature that I am excited to roll out using my custom backend is supporting traditional Chinese characters in addition to simplified. I shared my app with the [r/ChineseLanguage](https://www.reddit.com/r/ChineseLanguage/comments/ekikf5/i_built_a_daily_hsk_vocab_app/) community on Reddit, and I got a few requests for this. I'll be releasing traditional character support soon.** It would have been complicated with my old architecture, but it was easy with my own backend - some slight tweaks to my contact list data structure and adding some if statements (`if char_set == "traditional"... if char_set == "simplified"...`) into my functions that compose emails.
 
-During this migration, I refactored the subscribe function to instead write to a DynamoDB contact table. I have prod and staging contact tables. The contact table structure:
+#### Architecture before
+
+![Architecture diagram before migration](./vocab-subscriber-backend/vocab-app-v5-before-v2.png)(maxwidth=900px)
+
+This was my previous architecture using SendGrid for subscribing/unsubscribing users and sending emails.
+
+I had a subscribe API endpoint and Lambda function that posted to SendGrid's subscribe API. Within SendGrid, I created prod and staging contact lists for each of the 6 vocab levels. I needed to use the contact list IDs to subscribe and send emails, so I stored the contact list IDs in S3.
+
+SendGrid managed unsubscribes completely.
+
+My Lambda function to send daily emails looped through each contact list. I called SendGrid's API to create an email campaign, get the campaign ID, and then send the campaign to each contact list.
+
+#### Architecture after
+
+![Architecture diagram after migration](./vocab-subscriber-backend/vocab-app-v5-after.png)(maxwidth=900px)
+
+For my new backend, I needed to:
+1. build a contact list database,
+2. build an unsubscribe API, Lambda function, and UI, and
+3. direct my existing subscribe and daily email sending functions to use the new database and send email through SES.
+
+The subscribe function now writes to a DynamoDB contact table. I have contact tables for prod and staging. The contact table structure looks like this:
 
 ![Database structure](./vocab-subscriber-backend/contact-table.png)
 
-I needed to create a new API endpoint and function for **unsubscribing** since this was handled exclusively by SendGrid previously. I created an [unsubscribe UI](haohaotiantian.com/unsub) and the option to unsubscribe from an individual list or all lists. If the user comes from the unsubscribe link in their daily email, the dropdowns prepopulate with the level they are subscribed to.
+I needed to create a new API endpoint and function for unsubscribing since this was handled by SendGrid previously. I created an [unsubscribe UI](haohaotiantian.com/unsub) with the option to unsubscribe from an individual list or all lists. If the user comes from the unsubscribe link in their daily email, the dropdowns prepopulate with the level they are subscribed to.
 
-![Unsub UI](./vocab-subscriber-backend/unsub.png)
+![Unsub UI](./vocab-subscriber-backend/unsub-ui-v2.png)(maxwidth=640px)
 
-To unsubscribe a user from all lists, I use Dynamo's BatchGetItem method to check if their email is subscribed to any of the 6 vocab lists. If subscriptions are found, I use UpdateItem to change their Status to 'unsubscribed'.
+In my function that sends emails, I now scan the Dynamo contact table and loop through each contact. Assembling the campaign contents is a similar process as before. In both architectures, my email template is an HTML file packaged with the Lambda function zip file.
 
-In my function that **sends emails**, instead of looping through each of the SendGrid contact lists, I now scan the Dynamo contact table and loop through each contact. Assembling the campaign contents is a similar process, since the email template is still an HTML file packaged with the Lambda function zip file. 
-
-Previously SendGrid required me to create an email campaign, get the campaign ID, and then send the campaign. Now, I directly call the SES API to send each email. SES has been straightforward to use. I do need to build a Lambda to unsubscribe emails that bounce, which SendGrid used to handle for me. 
+The send email function calls the SES API. SES has been straightforward to use. On my to-do list is adding a Lambda to unsubscribe emails that bounce, which SendGrid used to handle for me. 
 
 #### What I learned
 
@@ -59,10 +68,10 @@ I was surprised by how fast I was able to build this! I attribute this to growin
 
 I'm also much more comfortable in Python. After spending a lot of time recently on a [frontend refactor](https://twitter.com/em__shea/status/1206473273208258560?s=20) from vanilla Javascript to Vue.js and then switching back to a primarily Python-based backend project, I realized just how much more intuitive and easy Python feels for me. This makes me want to spend more time with the Javascript and Vue.js basics so I can have more fun building frontends. Still ❤️ Python.
 
-I'm excited about the opportunities the new backend opens up, from traditional character support, to eventually the ability for users to create profiles and custom vocab lists. 
+I'm excited about the opportunities the new backend opens up, from traditional character support to eventually the ability for users to create profiles and custom vocab lists. 
 
 [Haohaotiantian.com](Haohaotiantian.com)
-
+<br />
 [Source code](https://github.com/em-shea/vocab)
 
 🌻

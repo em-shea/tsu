@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3-node
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      # - run:
+      #     name: Vue build
+      #     command: npm run build
+
+      # - run:
+      #     name: Install awscli
+      #     command: sudo pip install awscli
+
+      - run:
+          name: Copy files to S3
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./tsu -s prod deploy
+            fi
+            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
+              ./tsu -s default deploy
+            fi

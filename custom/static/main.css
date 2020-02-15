@@ -11,3 +11,7 @@ a.color:hover,
 .post-wrapper .view-post:hover {
   color: #9bcf71;
 }
+
+code {
+  color: inherit
+}
