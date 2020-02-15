@@ -1,0 +1,14 @@
+
+prod:
+  name: emshea-com
+  template: professional
+  domain: emshea.com
+  domain_cert: arn:aws:acm:us-east-1:789896561553:certificate/68d04c5b-5dde-4cd4-bd50-480b83fab62a
+  cdn_base: https://emshea.com
+
+default:
+  name: dev-emshea-com
+  template: professional
+  domain: dev.emshea.com
+  domain_cert: arn:aws:acm:us-east-1:789896561553:certificate/84cd2c36-6006-4c06-b821-e4026dcfcd8c
+  cdn_base: https://dev.emshea.com
