@@ -1,9 +1,9 @@
 ---
 id: vocab-subscriber-backend
-title: Building a serverless contact management backend
+title: Migrating to a serverless contact management backend
 category: Projects
 status: published
-published: 2020-02-14 12:00
+published: 2020-02-15 12:00
 preview: >
     I recently migrated a few core components of my daily Chinese vocab app - contact lists, sub/unsub API, and email send - from SendGrid to a custom built backend that uses DynamoDB, SES, Lambda, and API Gateway. Here I'll share about my architecture and some of the considerations in the migration.
 ---
@@ -27,7 +27,7 @@ Another factor was increasing my ability to add more custom logic into my backen
 
 For example, SendGrid email workflows are divided into 'marketing' and 'transactional' emails, neither of which 100% fit my use case. With the marketing model, I could group users into contact lists by the vocab level they subscribed to, but I needed the transactional email functionality of dynamically substituting in email content (ie, [handlebars](https://sendgrid.com/docs/for-developers/sending-email/using-handlebars/)). I created a workaround to be able to use a bit of both (I used SendGrid marketing contact lists, but I packaged my email templates within the Lambda function zip files so I could manipulate them, as opposed to using SendGrid's template management), but I could see my SendGrid integration getting more hacky over time.
 
-One new feature that I am excited to roll out soon is traditional Chinese characters support. I shared my app with the [r/ChineseLanguage](https://www.reddit.com/r/ChineseLanguage/comments/ekikf5/i_built_a_daily_hsk_vocab_app/) community on Reddit, and I got a few requests for this. It would have been complicated with my old architecture, but it was easy with my own backend - some slight tweaks to my contact list data structure and adding some if statements (`if char_set == "traditional"... if char_set == "simplified"...`) into my functions that compose emails.
+One new feature that I'm excited to roll out soon is support for traditional Chinese characters. I shared my app with the [r/ChineseLanguage](https://www.reddit.com/r/ChineseLanguage/comments/ekikf5/i_built_a_daily_hsk_vocab_app/) community on Reddit, and I got a few requests for this. It would have been complicated with my old architecture, but it was easy with my new backend - some slight tweaks to my contact list data structure and adding some if statements (`if char_set == "traditional"... if char_set == "simplified"...`) into my functions that compose emails.
 
 #### Architecture before
 
@@ -35,32 +35,31 @@ One new feature that I am excited to roll out soon is traditional Chinese charac
 
 This was my previous architecture using SendGrid for subscribing/unsubscribing users and sending emails.
 
-I had a subscribe API endpoint and Lambda function that posted to SendGrid's subscribe API. Within SendGrid, I created prod and staging contact lists for each of the 6 vocab levels. I needed to use the contact list IDs to subscribe and send emails, so I stored the contact list IDs in S3.
+I had a subscribe Lambda function that posted to SendGrid's subscribe API. Within SendGrid, I created prod and staging contact lists for each of the 6 vocab levels. I needed to use the contact list IDs to subscribe and send emails, so I stored the contact list IDs in S3. SendGrid managed unsubscribes.
 
-SendGrid managed unsubscribes completely.
-
-My Lambda function to send daily emails looped through each contact list. I called SendGrid's API to create an email campaign, get the campaign ID, and then send the campaign to each contact list.
+My daily email send function looped through each contact list. I called SendGrid's API to create an email campaign, get the campaign ID, and then send the campaign to each contact list.
 
 #### Architecture after
 
-![Architecture diagram after migration](./vocab-subscriber-backend/vocab-app-v5-after.png)(maxwidth=900px)
+![Architecture diagram after migration](./vocab-subscriber-backend/vocab-app-v5-after-v2.png)(maxwidth=900px)
 
 For my new backend, I needed to:
-1. build a contact list database,
-2. build an unsubscribe API, Lambda function, and UI, and
-3. direct my existing subscribe and daily email sending functions to use the new database and send email through SES.
 
-The subscribe function now writes to a DynamoDB contact table. I have contact tables for prod and staging. The contact table structure looks like this:
+1. Build a contact list database,
+2. Build an unsubscribe workflow, and
+3. Direct my existing subscribe and daily email sending functions to use the new database and send email through SES.
 
-![Database structure](./vocab-subscriber-backend/contact-table.png)
+The subscribe function now writes to a DynamoDB contact table. I have contact tables for prod and staging. The data structure looks like this:
 
-I needed to create a new API endpoint and function for unsubscribing since this was handled by SendGrid previously. I created an [unsubscribe UI](haohaotiantian.com/unsub) with the option to unsubscribe from an individual list or all lists. If the user comes from the unsubscribe link in their daily email, the dropdowns prepopulate with the level they are subscribed to.
+![Database structure](./vocab-subscriber-backend/contact-list-table.png)
+
+I needed to create a new API endpoint for unsubscribing since this was handled by SendGrid previously. I created an [unsubscribe UI](haohaotiantian.com/unsub) with the option to unsubscribe from an individual list or all lists. If the user comes from the unsubscribe link in their daily email, the dropdowns prepopulate with the level they are subscribed to.
 
 ![Unsub UI](./vocab-subscriber-backend/unsub-ui-v2.png)(maxwidth=640px)
 
-In my function that sends emails, I now scan the Dynamo contact table and loop through each contact. Assembling the campaign contents is a similar process as before. In both architectures, my email template is an HTML file packaged with the Lambda function zip file.
+The send email function now scans the Dynamo contact table and loops through each contact. Assembling the campaign contents is a similar process as before, with a few less steps than it took using SendGrid's workflow. In both architectures, my email template is an HTML file packaged with the Lambda function zip file.
 
-The send email function calls the SES API. SES has been straightforward to use. On my to-do list is adding a Lambda to unsubscribe emails that bounce, which SendGrid used to handle for me. 
+The send email function calls the SES API, which has been straightforward to implement. On my to-do list is automating unsubscribing bounced emails, which SendGrid used to handle for me. SES has built in functionality for receiving emails (like bounce notifications) and saving them to S3. The next step is writing a Lambda that processes the received emails, identifies bounces, and unsubscribes the contact.
 
 #### What I learned
 
@@ -70,9 +69,14 @@ I'm also much more comfortable in Python. After spending a lot of time recently 
 
 I'm excited about the opportunities the new backend opens up, from traditional character support to eventually the ability for users to create profiles and custom vocab lists. 
 
-[Haohaotiantian.com](Haohaotiantian.com)
+[Haohaotiantian.com](https://haohaotiantian.com)
 <br />
 [Source code](https://github.com/em-shea/vocab)
 
 🌻
 
+<style>
+code {
+    color: black;
+}
+</style>
