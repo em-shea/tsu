@@ -5,4 +5,3 @@ boto3~=1.9
 Pillow~=6.2
 python-resize-image~=1.1
 PyYAML~=5.3
-Pillow~=7.0
