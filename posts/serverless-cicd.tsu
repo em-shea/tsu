@@ -1,0 +1,78 @@
+---
+id: serverless-cicd
+title: A Simple CI/CD Pipeline for Serverless Apps
+category: Tools
+status: draft
+published: 2019-08-30 12:00
+preview: >
+  For deploying my applications, I have a simple deployment pipeline that uses AWS Serverless Application Model (SAM), GitHub, and Circle CI. Here I'll walk through the details about it.
+---
+
+For deploying my applications, I have a simple deployment pipeline that uses AWS Serverless Application Model (SAM), GitHub, and Circle CI.
+
+As is often the case, I started out writing Lambda functions in my text editor (VS Code) and manually pasting them in the AWS console for my first small project or two. This soon became painful - making sure that any changes in the text editor are copied over to the function code in the console, manually setting up API Gateway and IAM permissions, and so on. With this as my starting point, getting an automated deployment pipeline set up felt like magic. Being able to press 'enter', never leaving your text editor, and see your changes go live is just glorious.
+
+A CI/CD ("continuous integration, continuous delivery/deployment") pipeline is a toolchain that automates the manual steps I mentioned above - saving new versions of your code in a repository, building code packages and testing the code, and triggering new code deployments based on changes in the code. Below, I'll walk through some of the details of how I've set up mine for my serverless apps.
+
+More thorough intro to CI/CD: https://semaphoreci.com/blog/cicd-pipeline
+
+![CI/CD diagram](./serverless-cicd/cicd.png)(maxwidth=1000px)
+
+##### Jump to:
+
+- AWS SAM
+- GitHub
+- CircleCI
+
+---
+
+### Application Template
+
+Template: I use [AWS SAM](https://aws.amazon.com/serverless/sam/) as my infrastructure as code framework for defining my application. I write a `template.yaml` file with outlines the resources I'm deploying and files for each Lambda's function code.
+
+Params: To avoid hard coding variables like S3 bucket names and keys, I pass parameters through the SAM deploy command
+
+````
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An app that sends a daily email message for each HSK level with a vocab word
+Parameters:
+  S3BucketName:
+    Type: String
+  S3BucketKey:
+    Type: String
+  Stage:
+    Type: String
+````
+
+### CircleCI config file
+
+Prod/staging variable
+
+CircleCI `config.yml` file
+
+````
+ - run: 
+    name: Deploy with SAM
+    command: sam deploy --stack-name my-stack --s3-bucket my-s3-bucket --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides WordsBucketName=a-second-bucket WordsBucketKey=second-bucket-data.csv
+````
+
+### Code repository
+
+Prod/staging branches
+
+### Secrets
+
+CircleCI env vars
+
+---
+
+Relevant links
+
+🌻
+
+<style>
+code {
+    color: black;
+}
+</style>
