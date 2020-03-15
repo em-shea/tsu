@@ -62,17 +62,17 @@ provider:
     TSU_DESCRIPTION: ${self:custom.config.description}
     TSU_AUTHOR: ${self:custom.config.author}
 
-package:
-  exclude:
-    - "**"
-  include:
-    - custom/templates/**
-    - src/controllers/**
-    - src/services/**
-    - src/templates/**
-    - src/util/**
-    - requirements.txt
-    - requirements-dev.txt
+# package:
+#   exclude:
+#     - "**"
+#   include:
+#     - custom/templates/**
+#     - src/controllers/**
+#     - src/services/**
+#     - src/templates/**
+#     - src/util/**
+#     - requirements.txt
+#     - requirements-dev.txt
 
 plugins:
   - serverless-python-requirements
