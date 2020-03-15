@@ -5,8 +5,8 @@ custom:
   false: false
   pythonRequirements:
     dockerizePip: true
-    useDownloadCache: ${opt:reqcache, self:custom.false}
-    useStaticCache: ${opt:reqcache, self:custom.false}
+    # useDownloadCache: ${opt:reqcache, self:custom.false}
+    # useStaticCache: ${opt:reqcache, self:custom.false}
     useDownloadCache: true
     useStaticCache: true
     cacheLocation: ./.serverless/.requirements_cache
