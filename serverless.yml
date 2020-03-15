@@ -4,12 +4,9 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   false: false
   pythonRequirements:
-    dockerizePip: false
-    # useDownloadCache: ${opt:reqcache, self:custom.false}
-    # useStaticCache: ${opt:reqcache, self:custom.false}
-    # useDownloadCache: true
-    # useStaticCache: true
-    # cacheLocation: ./.serverless/.requirements_cache
+    dockerizePip: true
+    useDownloadCache: ${opt:reqcache, self:custom.false}
+    useStaticCache: ${opt:reqcache, self:custom.false}
   s3Sync:
     # First we copy our base files into S3
     - bucketName: tsu-${self:custom.config.domain}-${self:custom.config.name}-static
