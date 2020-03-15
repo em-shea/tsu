@@ -115,13 +115,8 @@ class PublishCmd(TsuCommand):
                     image_sized.save(imgByteArr, image_format)
                     imgByteArr.seek(0)
 
-<<<<<<< HEAD
-                    cdn_bucket.upload_fileobj(imgByteArr, image_sized_path, ExtraArgs={'ACL':'public-read', 'ContentType': Image.MIME[image_format]})
-                    images.append((f'/{image_sized_path}', size))
-=======
                     cdn_bucket.upload_fileobj(imgByteArr, image_sized_path, ExtraArgs={'ACL':'public-read', 'ContentType': Image.MIME[image_sized.format]})
                     images.append((f'{cdn_base_url}/{image_sized_path}', size))
->>>>>>> upstream/master
 
         return images
 

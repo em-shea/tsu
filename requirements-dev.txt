@@ -2,10 +2,7 @@ watchdog~=0.9
 markdown2~=2.3
 Pygments~=2.4
 boto3~=1.9
-<<<<<<< HEAD
-=======
 Pillow~=6.2
->>>>>>> upstream/master
 python-resize-image~=1.1
 PyYAML~=5.3
 Pillow~=7.0
