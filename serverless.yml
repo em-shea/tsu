@@ -71,6 +71,8 @@ package:
     - src/services/**
     - src/templates/**
     - src/util/**
+    - requirements.txt
+    - requirements-dev.txt
 
 plugins:
   - serverless-python-requirements
