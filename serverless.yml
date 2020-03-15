@@ -57,6 +57,10 @@ provider:
     TSU_TEMPLATE: ${self:custom.config.template}
     TSU_DOMAIN: ${self:custom.config.domain}
     TSU_CDN_BASE: ${self:custom.config.cdn_base}
+    TSU_HOMEPAGE: ${self:custom.config.homepage}
+    TSU_TITLE: ${self:custom.config.title}
+    TSU_DESCRIPTION: ${self:custom.config.description}
+    TSU_AUTHOR: ${self:custom.config.author}
 
 package:
   exclude:
@@ -93,6 +97,12 @@ functions:
     name: tsu-${self:custom.config.name}-about
     events:
       - http: GET /about
+
+  rss:
+    handler: src/controllers/rss.handler
+    name: tsu-${self:custom.config.name}-rss
+    events:
+      - http: GET /rss.xml
 
   ########################
   # API routes
