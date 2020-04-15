@@ -1,0 +1,28 @@
+---
+id: serverless-coffee-break
+title: Serverless Coffee Break
+category: Media
+status: published
+published: 2020-04-03 12:00
+preview: >
+  I joined James Beswick on Serverless Coffee Break for a quick chat about my serverless development journey. Check out the recording here. 
+---
+
+I joined [James Beswick](https://twitter.com/jbesw) on Serverless Coffee Break for a quick chat about my serverless development journey. We talked about how I got started with serverless app development, the toolchain choices I've made, and evolving the architecture of [haohaotiantian.com](https://haohaotiantian.com/).
+
+You can check out the recording here: 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oxHnUFMRWu8?start=4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<style>
+@media (min-width: 501px) {
+    iframe {
+        min-height: 320px;
+    }
+}
+@media (max-width: 500px) {
+    iframe {
+        min-height: 200px;
+    }
+}
+</style>
