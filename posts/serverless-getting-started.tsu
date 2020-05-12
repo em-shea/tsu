@@ -1,0 +1,116 @@
+---
+id: serverless-getting-started
+title: Getting started with serverless on AWS
+category: AWS
+status: draft
+published: 2020-05-11 12:00
+preview: >
+  If you're looking to get started building serverless applications on AWS, this resource guide is for you! I've gathered tutorials and example projects of my own that will help you progressively grow your skills and comfort level with serverless.
+---
+
+If you're looking to get started building serverless applications on AWS, this resource guide is for you! I've gathered tutorials and example projects of my own that will help you progressively grow your skills and comfort level with serverless.
+
+##### Jump to:
+
+[What's in this resource guide](#whats-in-this-resource-guide)
+
+1. [Set up a static website served from S3](#1-set-up-a-static-website-served-from-s3)
+2. [Interact with an external API from your static website](#2-interact-with-an-external-api-from-your-static-website)
+3. [Get started with a framework](#3-get-started-with-a-framework)
+4. [Build a Lambda function that's invoked by API Gateway](#4-build-a-lambda-function-thats-invoked-by-api-gateway)
+5. [Build a Lambda function that's invoked by CloudWatch Events](#5-build-a-lambda-function-thats-invoked-by-cloudwatch-events)
+6. [Build a Lambda & API Gateway app that sends messages using SES/SNS](#6-build-a-lambda-api-gateway-app-that-sends-messages-using-sessns)
+7. [Build a Lambda function that writes to DynamoDB](#7-build-a-lambda-function-that-writes-to-dynamodb)
+
+---
+
+#### What's in this resource guide
+
+This guide is for anyone interested in learning to build serverless applications on AWS. The only prerequisites are beginning coding experience (I took Python and Javascript intro courses on [Codecademy](https://www.codecademy.com/)) and an AWS account.
+
+I found that I learned best by starting small and steadily adding in more services, increasing the complexity of my applications over time. The tutorials below start with simple static websites hosted in S3. By the end, you'll be able to build an application that uses Lambda, API Gateway, CloudWatch Events, S3, SNS/SES, and DynamoDB.
+
+It helps me to stay motivated by using tutorials as references while building projects of my own. For each tutorial, I've included one of my own projects that uses the same concepts in the tutorial to provide you with ideas. 
+
+---
+
+#### 1. Set up a static website served from S3
+A good place to start is hosting a static website from an S3 bucket. You can do so with just a few lines of HTML, like this tutorial does:
+
+- **Tutorial**: [Setting Up a Static Website Using a Custom Domain](https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html)
+
+```html
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>My Website Home Page</title>
+</head>
+<body>
+  <h1>Welcome to my website</h1>
+  <p>Now hosted on Amazon S3!</p>
+</body>
+</html>
+```
+
+- **Example project**:
+I made a [Tarot card reader](http://tarot.emshea.com/) using interactive fiction writing tool [Twine](https://twinery.org/). You can export stories in Twine as HTML and host it just like in the tutorial above. Here is the [static HTML file](https://github.com/em-shea/tarot/blob/master/Tarot.html) that's serving my site.
+
+#### 2. Interact with an external API from your static website
+This tutorial covers the basics of working with an external API. With limited experience working with APIs, I found it useful to first practice calling an existing API before building and interacting with my own API. 
+
+- **Tutorial**: [How to Connect to an API with JavaScript](https://www.taniarascia.com/how-to-connect-to-an-api-with-javascript/)
+
+- **Example project**: This [Magic: The Gathering card finder app](http://mtg.emshea.com/) pulls Magic card data from the [Scryfall Magic API](https://scryfall.com/).
+
+#### 3. Get started with a framework
+Now is a good time to start using a serverless deployment framework. Using a framework lets you define your application as infrastructure as code, as opposed to making changes to resources directly in the AWS console. This makes building complex applications much easier to manage. I use the [Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/), and the [Serverless Framework](https://serverless.com/) is another popular choice.
+
+For the remaining tutorials, I've included an example Serverless Application Model (SAM) template. The SAM templates aren't tied to the tutorial or the example project, but they should help you as a reference to define similar functionality in your own template.
+
+- **Tutorial**: [Deploying a Hello World Application with SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-getting-started-hello-world.html)
+
+#### 4. Build a Lambda function that's invoked by API Gateway
+Using API Gateway will allow you to trigger Lambda functions when users land on your website or click a button.
+
+- **Tutorial**: [Build a Hello World API with Lambda Proxy Integration](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html)
+
+- [Example SAM template](https://gist.github.com/em-shea/d328fe0baca2c33f787d35d0bfe7c91e)
+
+- **Example project**: A [random greeting generator](https://hello.emshea.com/) that also calls an external weather API. The webpage URL accepts query string parameters to show the weather for any location, with Seattle as the default - [London](https://hello.emshea.com/?l=London), [Tokyo](https://hello.emshea.com/?l=Tokyo), [Dubai](https://hello.emshea.com/?l=Tokyo). <br><br>
+Check out the [source code](https://github.com/em-shea/hello-lambda) here. The Lambda function is invoked by API Gateway when a user hits the page. The function pulls the random greeting (and random font color) from S3, calls the weather API, and generates the page's HTML.
+
+#### 5. Build a Lambda function that's invoked by CloudWatch Events
+Another way to trigger a Lambda function is to create a CloudWatch Events that will invoke your function on a schedule (ex, once a week or once a minute).
+
+- **Tutorial**: [Schedule AWS Lambda Functions Using CloudWatch Events](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/RunLambdaSchedule.html)
+
+- [Example SAM template](https://gist.github.com/em-shea/b4c76411371001a756599a5da5e582b8)
+
+- **Example project**: This and the next two examples are within the same project, my application that sends [daily Chinese vocab](https://haohaotiantian.com) to subscribers. Building up a small project from a simple architecture and adding complexity and features over time has been a great way to learn new technologies.
+<br><br>
+I use a daily CloudWatch event to trigger a Lambda that sends vocab emails to my subscribers. Below is a diagram of the earliest version of this application. Check out [this blog post](https://emshea.com/post/chinese-vocab-app) for more details.
+
+![First architecture diagram of Haohaotiantian](./serverless-getting-started/vocab-app-diagram-v1.png)(maxwidth=320px)
+
+#### 6. Build a Lambda & API Gateway app that sends messages using SES/SNS
+With SES or SNS, you can send messages from a Lambda function. This tutorial can be easily adapted for SNS to send text messages. I found SNS a little more straightforward to try out first.
+
+- **Tutorial**: [Create Dynamic Contact Forms for S3 Static Websites Using AWS Lambda, Amazon API Gateway, and Amazon SES](https://aws.amazon.com/blogs/architecture/create-dynamic-contact-forms-for-s3-static-websites-using-aws-lambda-amazon-api-gateway-and-amazon-ses/)
+
+- [Example SAM template](https://gist.github.com/em-shea/172b13a9884a42f5ec10be6d4c297d00)
+
+- **Example project**: The initial architecture of my Chinese vocab app used SNS to send messages to users, and the current version uses SES. See diagram [above](#5-build-a-lambda-thats-invoked-by-cloudwatch-events) and [this blog post](https://emshea.com/post/chinese-vocab-app).
+
+#### 7. Build a Lambda function that writes to DynamoDB
+Adding DynamoDB will allow you to have a data store in your applications. With these components - S3, Lambda, CloudWatch Events, SNS/SES, and DynamoDB - the possibilities of serverless applications that you can build are endless!
+
+This [DynamoDB core components guide](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) was a great read to start with.
+
+- **Tutorial**: [Create a Serverless Application with AWS Lambda and DynamoDB](https://ordina-jworks.github.io/cloud/2018/10/01/How-to-build-a-Serverless-Application-with-AWS-Lambda-and-DynamoDB.html)
+
+- [Example SAM template](https://gist.github.com/em-shea/fd6753816ef855f0844216833b389cd6)
+
+- **Example project**: I added a DynamoDB table into my Chinese vocab app to store a history of the words that have been sent to users. Check out [this blog post](https://emshea.com/post/vocab-app-database) for details.
+
+Happy building!
+
+🐿️
