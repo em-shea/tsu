@@ -3,98 +3,127 @@ id: serverless-cicd
 title: A Simple CI/CD Pipeline for Serverless Apps
 category: Tools
 status: draft
-published: 2020-04-01 12:00
+published: 2020-05-18 12:00
 preview: >
   For deploying my applications, I have a simple deployment pipeline that uses AWS Serverless Application Model (SAM), GitHub, and Circle CI. Here I'll walk through the details about it.
 ---
 
 For deploying my applications, I have a simple deployment pipeline that uses AWS Serverless Application Model (SAM), GitHub, and Circle CI. If you're not familiar with CI/CD, here's [a post that introduces it well](https://semaphoreci.com/blog/cicd-pipeline).
 
-Many people (myself included) get started with Lambda by writing functions directly in the console. Getting a good CI/CD pipeline set up and getting familiar with it made *such* a difference in my development experience. It still feels magical to enter 'git push' in my text editor and seeing my changes deployed with no effort at all.
+Many people (myself included) get started with Lambda by writing functions directly in the console. Getting a CI/CD pipeline set up and getting comfortable with it made *such* a difference in my development experience. It can be painful to go through all the set up for the first time, but it will become second nature once you've set up a project or two and experienced how magical it is when it's working smoothly!
 
-My CI/CD pipeline
+My CI/CD pipeline:
 ![CI/CD diagram](./serverless-cicd/cicd.png)(maxwidth=1000px)
 
 ##### Jump to:
 
-- GitHub
-- CircleCI
-- AWS SAM
+- Components
+- 1. 
 
 ---
 
-### GitHub
+### Components
+Let's first introduce the concepts and tools we'll be working with. These are the tools that I prefer, but there's plenty of other great tools out there that you can swap in.
 
-I'm using GitHub as my code repository. For each project, I create `staging` and `master` branches for my development and production environments. 
+Text editor - where you write your code, ie VS Code.
+Code repository - where you store and version control your code, ie GitHub.
+Version-control system - CLI tool for commiting code to GitHub, ie Git. Git is nearly ubiquitous in software development. We'll use it 
+Deployment framework - what you use to write your infrastructure as code, ie SAM.
+CI/CD platform - the tool that builds and deploys your code, ie CircleCI.
+AWS - where you deploy your infrastructure and code
 
-### CircleCI config file
+Example project: GitHub link to simple lambda function that sends text to SNS
 
-For my build and deployment tool, I'm using CircleCI. I'm logged into CircleCI with my GitHub account, so that my GitHub repositories are auto-detected and ready to set up as CircleCI projects ([an in-depth walkthrough of these steps](https://github.com/dwyl/learn-circleci)). 
+1. Install or check if you have installed Git
 
-To set up my GitHub repo as a new CircleCI, I need to create a CircleCI `config.yml` file to my repo. These are the CLI commands that CircleCI will run every time a new version of my code is pushed to GitHub. Let's walk through my config file. I've added comments to explain the code.
+Check if you git installed by running 'git --version' in your CLI. If you don't have Git installed, [download it here](https://git-scm.com/downloads).
 
-````
-# These first steps are pretty standard. I'm writing my app in Python 3.
-version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/python:3
+2. Set up a GitHub account and connect to VS Code
 
-    steps:
-      - checkout
+Next, set up a [GitHub account](https://github.com/join) if you don't have one already. To save your computer's credentials to GitHub, follow [this guide](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh) to [generate an SSH key](https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [save it to GitHub](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
 
-      # Here, we install the AWS CLI and then the Serverless Application Model (SAM) CLI.
-      - run:
-          name: Install awscli
-          command: sudo pip install awscli
+Download [GitHub Desktop](https://desktop.github.com/).
 
-      - run:
-          name: Install SAM
-          command: sudo pip install aws-sam-cli
+3. Create a new GitHub repo (or fork my example one) and clone to your computer
 
-      # Finally we deploy with SAM. 
-      - run: 
-          name: Deploy with SAM
-          command: sam deploy --stack-name my-stack --s3-bucket my-s3-bucket --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides WordsBucketName=a-second-bucket WordsBucketKey=second-bucket-data.csv
+Our next step is to create a new GitHub repo for our project. I've created [an example project](https://github.com/em-shea/serverless-cicd-example) for this tutorial that you can fork. Forking my repo will create an identical repo in your GitHub account. Then, got to your new repo and click 'Clone or download' -> 'Open in Desktop'. Once the repo is cloned to your computer, from GitHub Desktop click 'Repository' -> 'Open in Visual Studio Code'.
 
-      command: |
-            sam package --s3-bucket hsk-vocab --output-template-file packaged-template.yaml 
-            
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then              
-              sam deploy --template-file ./packaged-template.yaml --stack-name vocab --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides WordsBucketName=hsk-vocab WordsBucketKey=HSK_Level_6.csv ListsBucketName=hsk-vocab ListsBucketKey=Contact_Lists.csv DomainName=https://haohaotiantian.com SGApiKey=$SGApiKey SubNotifyEmail=$SubNotifyEmail DynamoBackupsS3BucketName=hhtt-backups Stage=prod
-            fi
-            if [ "${CIRCLE_BRANCH}" == "staging" ]; then
-              sam deploy --template-file ./packaged-template.yaml --stack-name vocab-staging --region us-east-1 --capabilities CAPABILITY_IAM --parameter-overrides WordsBucketName=hsk-vocab-staging WordsBucketKey=HSK_Level_6.csv ListsBucketName=hsk-vocab-staging ListsBucketKey=Contact_Lists.csv DomainName=https://staging.haohaotiantian.com SGApiKey=$SGApiKeyStaging SubNotifyEmail=$SubNotifyEmail DynamoBackupsS3BucketName=hhtt-backups-staging Stage=staging
-            fi
-````
+3. Set up a CircleCI account and set your repo as a project, adding .circleci config file
 
-### Secrets
+Now let's set up a [CircleCI account](https://circleci.com/signup/). Select 'sign up with GitHub' to automatically connect your CircleCI and GitHub accounts. 
 
-CircleCI env vars
+Once you're signed in to CircleCI, it's time to set up your repo as a project. Since CircleCI is connected to your GitHub account, it will automatically list all of your repos. Select the 'serverless-cicd-example' repo that you forked. 
 
-### Application Template
+The new project setup workflow asks you to create a .circleci folder with config.yml file. This file is where you write out the steps and cli commands that you want CircleCI to make when it builds/deploys your code. I've already included this folder in the example project, so you can select 'Add Manually' -> 'Start Building'.
 
-Template: I use [AWS SAM](https://aws.amazon.com/serverless/sam/) as my infrastructure as code framework for defining my application. I write a `template.yaml` file with outlines the resources I'm deploying and files for each Lambda's function code.
+4. Add AWS secret key to your CircleCI project's env vars
 
-Params: To avoid hard coding variables like S3 bucket names and keys, I pass parameters through the SAM deploy command, like so:
+We need to give CircleCI AWS IAM permissions in order for it to make calls to AWS and create our infrastructure. To do this, sign into the AWS console, [go to IAM and select Users](https://console.aws.amazon.com/iam/home#/users). Click 'Add user'. Name the user 'circleci-serverless-example' and select 'Programmatic access'.
 
-````
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: 'AWS::Serverless-2016-10-31'
-Description: An app that sends a daily email message for each HSK level with a vocab word
-Parameters:
-  S3BucketName:
-    Type: String
-  S3BucketKey:
-    Type: String
-  Stage:
-    Type: String
-````
+Now we give the new user permissions. Best practice is to grant IAM permissions so that the user only has the bare minimum permissions they require to complete the given task. To keep this getting started tutorial simple, we're going to give our user more permissions than it needs, but note that for a production application you would want to make these permissions more restrictive. 
+
+Select 'Attach existing policies directly,' then check 'AWSLambdaFullAccess', 'AmazonSNSFullAccess', and 'AWSCloudFormationFullAccess'. 
+
+Once you've created the user, you'll see an access key ID and a secret access key. We'll store these in the CircleCI project's environment variables so CircleCI can deploy for us. In CircleCI, navigate to your project and click 'Project Settings' -> 'Environment Variables.' Add both your access key ID (name: AWS_ACCESS_KEY_ID) and secret access key (name: AWS_SECRET_ACCESS_KEY), like so:
+
+[Image]()
+
+> Watch out for a single blank space getting added in front of your AWS access key ID when copying from the AWS console. I've run into this issue recently.
+
+5. Review SAM template and function code
+
+At this point, you would add your SAM template configuration and write your Lambda function code. I've already included this in the example project. Open up 'template.yaml' to see the SAM template and 'SendTextFunction.py' to see the example function code.
+
+6. Create S3 bucket to save function code in
+
+Before we deploy, we'll need to create an S3 bucket that SAM uses to store our function code. You can manually create the bucket in the console, or run this command (if you have the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) installed). S3 bucket names need to be universally unique, so be sure to make a change to 'serverless-cicd-example' (like adding today's date).
+
+`aws s3api create-bucket --bucket serverless-cicd-example --region us-east-1`
+
+Now, go into your .circleci/config.yaml file and update S3 bucket name in the sam deploy command to the bucket name you just created.
+
+6. Add secrets to your CircleCI project's env vars
+
+Lastly, you often need to manage 'secrets', or variables that you don't want to upload to your code repository for the world to see, in your CI/CD pipeline. In my example application, we want our Lambda to send a text message to us, so we need to give it our phone number. 
+
+To do this, save another environment variable in CircleCI called 'MY_PHONE_NUMBER':
+
+[image]()
+
+Within the sam deploy command in the config.yaml file, you can see that we include this environment variable as a parameter override. 
+
+`--parameter-overrides MyPhoneNumber=$MY_PHONE_NUMBER`
+
+In our SAM template, you can see that we register this variable as a parameter and then pass it to our Lambda function as an environment variable and to our SNS topic as a subscription endpoint. Finally, within our function code we use the secret like this:
+
+`phone_number = os.environ['MY_PHONE_NUMBER']`
+
+Don't stress if secrets are a bit too complicated for now! Use this example as a reference for when you do need to pass secrets into your CI/CD pipeline.
+
+7. Push!
+
+At long last, we're ready to push our code! In VS Code with the example project open, open a new terminal. Run `git status` to confirm that you're in the right directory and check which files you've modified. 
+
+Next, run `git add .` to add your changes and prepare to commit them. 
+
+Run `git commit -m "change S3 bucket name"` to commit changes and add a description of your changes. 
+
+Run `git push` to push your changes to GitHub. Once the changes hit GitHub, within CircleCI you should now see a new build and deployment running. You can also watch the resources being created if you click on your stack in the [CloudFormation console](https://console.aws.amazon.com/cloudformation).
+
+[image]()
+
+> If your first deployment of a Cloudformation stack fails at any point, you will need to manually delete the stack in the CloudFormation console in order to try again. Once you have had once successful deployment, the CloudFormation stack is then able to roll back failed deployments on it's own, no manual deletes required.
+
+8. Test out your Lambda (using CLI)
+
+If your CircleCI deployment was successful, you can test your Lambda function in the console or using the AWS CLI:
+
+`aws lambda invoke --function-name SendTextFunction --payload '{}' response.json --region us-east-1`
 
 ---
 
-Relevant links
+Later post - Getting fancy: staging and master branches of GitHub, tightening IAM permissions.
+
 
 🌻
 

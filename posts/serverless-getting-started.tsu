@@ -2,7 +2,7 @@
 id: serverless-getting-started
 title: Getting started with serverless on AWS
 category: AWS
-status: draft
+status: published
 published: 2020-05-11 12:00
 preview: >
   If you're looking to get started building serverless applications on AWS, this resource guide is for you! I've gathered tutorials and example projects of my own that will help you progressively grow your skills and comfort level with serverless.
