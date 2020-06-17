@@ -1,0 +1,16 @@
+SAM policy templates:
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+
+Circular dependencies with S3 events:
+https://aws.amazon.com/blogs/infrastructure-and-automation/handling-circular-dependency-errors-in-aws-cloudformation/
+
+Inline CloudFormation
+- policies
+- conditions
+
+Indentation highlighter to help see YAML
+
+Examples only in JSON/YAML?
+YAML-JSON converter
+
+Debugging: check the generated template file in S3
