@@ -2,19 +2,19 @@
 id: serverless-cicd
 title: A Basic CI/CD Pipeline for Serverless Apps
 category: Tools
-status: draft
-published: 2020-05-18 12:00
+status: published
+published: 2020-06-16 12:00
 preview: >
-  For deploying my applications, I have a CI/CD pipeline that uses AWS Serverless Application Model (SAM), GitHub, and CircleCI. In this post, I'll show you how to set it up.
+  For deploying my applications, I have a CI/CD pipeline that uses the AWS Serverless Application Model (SAM), GitHub, and CircleCI. In this post, I'll show you how to set it up.
 ---
 
-For deploying my applications, I have a CI/CD pipeline that uses AWS Serverless Application Model (SAM), GitHub, and CircleCI. In this post I'll show you how to set it up. If you're not familiar with CI/CD, here's [a post that introduces it well](https://semaphoreci.com/blog/cicd-pipeline).
+For deploying my applications, I have a CI/CD pipeline that uses the AWS Serverless Application Model (SAM), GitHub, and CircleCI. In this post I'll show you how to set it up. If you're not familiar with CI/CD, here's [a post that introduces it well](https://semaphoreci.com/blog/cicd-pipeline).
 
-Many people (myself included) get started with serverless by using the AWS console. While it's helpful to start, building directly in the console can get tricky as you run into issues like keeping track of your Lambda function code edits or making manual, repetitive configuration changes for API Gateway. 
+Many people (myself included) get started with serverless by using the AWS console. While it's helpful to start, building directly in the console can get tricky as you run into issues like keeping track of your Lambda function code edits or making manual, repetitive configuration changes to resources. 
 
 In order to build more complex applications and keep your sanity, a CI/CD pipeline will be a big help. A CI/CD pipeline will take you out of the console and allow you to store and update function code, configure resources, and deploy entire applications from right within your text editor. It is as magical as it sounds.
 
-Building a CI/CD pipeline may feel like a lot of components to bring together at first, but it becomes second nature once you've set up a project and gotten comfortable using the toolchain.
+Building a CI/CD pipeline may feel like a lot of components to bring together at first, but it becomes second nature once you've set up a project and gotten comfortable with it. 
 
 ![CI/CD diagram](./serverless-cicd/pipeline-diagram.png)
 
@@ -33,7 +33,7 @@ Let's first introduce the concepts and tools we'll be working with. These are th
 
 **Cloud computing provider** - Where you deploy your infrastructure and code, i.e. [Amazon Web Services (AWS)](https://aws.amazon.com/).
 
-Our example project for this tutorial is an application that includes a Lambda function that sends messages to an SNS topic. Check it out here: [serverless-cicd-example](https://github.com/em-shea/serverless-cicd-example)
+Our example project for this tutorial is an application consisting of a Lambda function that sends messages to an SNS topic. Check it out here: [serverless-cicd-example](https://github.com/em-shea/serverless-cicd-example)
 
 Let's get started!
 
@@ -46,7 +46,7 @@ Let's get started!
 3. [Create a CircleCI account and set up a new project](#3-create-a-circleci-account-and-set-up-a-new-project)
 4. [Give CircleCI AWS permissions](#4-give-circleci-aws-permissions)
 5. [Review SAM template and function code](#5-review-sam-template-and-function-code)
-6. [Create an S3 bucket to save function code in](#6-create-an-s3-bucket-to-save-function-code-in)
+6. [Create an S3 bucket for your deployment package](#6-create-an-s3-bucket-for-your-deployment-package)
 7. [Managing secrets in your CI/CD pipeline](#7-managing-secrets-in-your-cicd-pipeline)
 8. [Deploy & test out your application](#8-deploy-test-out-your-application)
 
@@ -56,7 +56,7 @@ Let's get started!
 
 If you haven't already, [download VS Code](https://code.visualstudio.com/).  
 
-Check if you git installed by running 'git --version' in your CLI. If you don't have Git installed, [download it here](https://git-scm.com/downloads).
+Check if you git installed by running `git --version` in your CLI. If you don't have Git installed, [download it here](https://git-scm.com/downloads).
 
 Next, set up a [GitHub account](https://github.com/join) if you don't have one already. To save your computer's credentials to GitHub, follow [this guide](https://help.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh) to [generate an SSH key](https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [save it to GitHub](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
 
@@ -66,7 +66,7 @@ Download [GitHub Desktop](https://desktop.github.com/).
 
 #### 2. Fork my example repo and clone to your computer
 
-Our next step is to create a GitHub repo for our project. I've created [an example project](https://github.com/em-shea/serverless-cicd-example) for this tutorial that you can fork. Forking my repo will create an identical repo in your GitHub account. 
+Our next step is to create a GitHub repo for our project. I've created [an example project](https://github.com/em-shea/serverless-cicd-example) for this tutorial that you can fork (click 'Fork' from the example project). Forking my repo will create an identical repo in your GitHub account. 
 
 Then, go to your new repo and click 'Clone or download' -> 'Open in Desktop'. Once the repo is cloned to your computer, from GitHub Desktop click 'Repository' -> 'Open in Visual Studio Code'.
 
@@ -116,15 +116,15 @@ At this point, you would write your SAM template configuration file and your Lam
 
 <br/>
 
-#### 6. Create an S3 bucket to save function code in
+#### 6. Create an S3 bucket for your deployment package
 
-Before we deploy, we'll need to create an S3 bucket that SAM uses to store our function code. 
+Before we deploy, we'll need to create an S3 bucket that SAM will upload our deployment package (i.e., our template file and function code) to. 
 
 You can manually create the bucket in the console, or run this command (if you have the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) installed). S3 bucket names need to be universally unique, so be sure to make a change to 'serverless-cicd-example' (like adding today's date).
 
 `aws s3api create-bucket --bucket serverless-cicd-example --region us-east-1`
 
-In your .circleci/config.yaml file, update the S3 bucket name in the sam deploy command to the bucket name you just created (and your IAM policy for CircleCI if you used the [more restrictive IAM policy](#6-give-circleci-aws-permissions)).
+In your .circleci/config.yaml file, update the S3 bucket name in the sam deploy command to the bucket name you just created (and your IAM policy for CircleCI if you used the [more restrictive IAM policy](#4-give-circleci-aws-permissions)).
 
 <br/>
 
@@ -140,7 +140,7 @@ There's no need to make any other changes, as this variable will get passed to o
 
 `--parameter-overrides MyPhoneNumber=$MY_PHONE_NUMBER`
 
-In our SAM template, you can see that we register this variable as a parameter and then pass it to our Lambda function as an environment variable and to our SNS topic as a subscription endpoint. Finally, within our function code we use the secret like this:
+In our SAM template, we register this variable as a parameter and then pass it to our Lambda function as an environment variable and to our SNS topic as a subscription endpoint. Finally, within our function code we use the secret like this:
 
 `phone_number = os.environ['MY_PHONE_NUMBER']`
 
@@ -151,6 +151,8 @@ Don't stress if secrets feel a bit complicated. Use this example as a reference 
 #### 8. Deploy & test out your application
 
 We're ready to push our code! Within VS Code with the example project open, open a new terminal. Run `git status` to confirm that you're in the right directory and check which files you've modified. 
+
+![Git status](./serverless-cicd/git-status.png)(maxwidth=640px)
 
 Next, run `git add .` to add your changes and prepare to commit them. 
 
@@ -176,7 +178,7 @@ You should receive a text message congratulating you on your new CI/CD pipeline 
 
 There's a lot of complexity involved in getting all of these tools to communicate with one another. Stick with it and figure out the CI/CD toolchain that works well for you. Having a CI/CD pipeline makes a world of difference in the ease and speed of your development experience. 
 
-There's a few more advanced CI/CD topics that I'd like to cover in future blog posts, like creating staging and master branches in GitHub for your dev and prod environments, adding testing to your pipeline, and tightening your IAM permissions for CircleCI. 
+There's a few more advanced CI/CD topics that I'd like to cover in future blog posts, like creating staging and main branches in GitHub for your dev and prod environments, adding testing to your pipeline, and tightening your IAM permissions for CircleCI. 
 
 For now, I hope this post helps you to get started with CI/CD for serverless.
 
