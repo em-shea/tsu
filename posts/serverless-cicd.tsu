@@ -1,6 +1,6 @@
 ---
 id: serverless-cicd
-title: A Basic CI/CD Pipeline for Serverless Apps
+title: A basic CI/CD pipeline for serverless apps
 category: Tools
 status: published
 published: 2020-06-16 12:00
@@ -81,6 +81,8 @@ Once you're signed in to CircleCI, it's time to set up your repo as a project.
 Since CircleCI is connected to your GitHub account, it will automatically list all of your repos. Select the 'serverless-cicd-example' repo that you forked. 
 
 The new project setup workflow asks you to create a .circleci folder with config.yml file. This file is where you write out the steps and CLI commands that you want CircleCI to run when it builds and deploys your code. I've already included a .circleci folder in the example project, so you can select 'Add Manually' -> 'Start Building'.
+
+> CircleCI will try to run an initial build, but since we're not finished with our setup, it will fail this time. No problem!
 
 ![New project setup CircleCI workflow](./serverless-cicd/add-circleci-config.png)
 
