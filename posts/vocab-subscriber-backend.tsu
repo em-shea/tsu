@@ -5,10 +5,10 @@ category: Projects
 status: published
 published: 2020-02-15 12:00
 preview: >
-    I recently migrated a few core components of my daily Chinese vocab app - contact lists, sub/unsub API, and email send - from SendGrid to a custom built backend that uses DynamoDB, SES, Lambda, and API Gateway. Here I'll share about my architecture and some of the considerations in the migration.
+    I recently migrated a few core components of my daily Chinese vocab app - including contact lists, subscribe/unsubscribe API, and email sending functionality - from SendGrid to a custom built backend that uses DynamoDB, SES, Lambda, and API Gateway. Here I'll share about my architecture and some of the considerations in the migration.
 ---
 
-I recently migrated a few core components of my [daily Chinese vocab app](https://haohaotiantian.com) - contact lists, sub/unsub API, and email send - from SendGrid to a custom built backend that uses DynamoDB, SES, Lambda, and API Gateway. Here I'll share about my architecture and some of the considerations in the migration.
+I recently migrated a few core components of my [daily Chinese vocab app](https://haohaotiantian.com) - including contact lists, subscribe/unsubscribe API, and email sending functionality - from SendGrid to a custom built backend that uses DynamoDB, SES, Lambda, and API Gateway. Here I'll share about my architecture and some of the considerations in the migration.
 
 ##### Jump to:
 

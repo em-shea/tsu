@@ -26,7 +26,7 @@ If you're looking to get started building serverless applications on AWS, this r
 
 #### What's in this resource guide
 
-This guide is for anyone interested in learning to build serverless applications on AWS. The only prerequisites are beginning coding experience (I took Python and Javascript intro courses on [Codecademy](https://www.codecademy.com/)) and an AWS account.
+This guide is for anyone interested in learning to build serverless applications on AWS. The only prerequisites are beginning coding experience (I took Python and Javascript intro courses on [Codecademy](https://www.codecademy.com/), read more in [this post](https://emshea.com/post/learning-to-code)) and an AWS account.
 
 I found that I learned best by starting small and steadily adding in more services, increasing the complexity of my applications over time. The tutorials below start with simple static websites hosted in S3. By the end, you'll be able to build an application that uses Lambda, API Gateway, CloudWatch Events, S3, SNS/SES, and DynamoDB.
 
