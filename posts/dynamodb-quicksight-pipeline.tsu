@@ -8,6 +8,8 @@ preview: >
   Here I'll explain and share code samples for how to set up a pipeline to analyze DynamoDB table data in QuickSight. This pipeline uses Lambda, CloudWatch Events, and S3 to generate weekly QuickSight reports. 
 ---
 
+>**Update**: Since writing this post, it's gotten even easier to set up a pipeline like this. Instead of creating a Lambda function to scan your DynamoDB table like I describe here, you can now export data to S3 directly from DynamoDB. [Learn how here](https://aws.amazon.com/blogs/aws/new-export-amazon-dynamodb-table-data-to-data-lake-amazon-s3/).
+
 When I wanted to use QuickSight to visualize data from one of my applications, I was initially surprised to find that DynamoDB isn't one of the natively supported data sources like Redshift, S3, RDS, and others. This makes sense, since DynamoDB is optimized for transactional queries, not running analytical queries.
 
 In order to run analytics on DynamoDB data with QuickSight, I needed to pipe the data out of DynamoDB. To do this, I built a simple data pipeline with Lambda, CloudWatch Events, and S3. 

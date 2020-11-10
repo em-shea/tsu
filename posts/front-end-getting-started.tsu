@@ -1,0 +1,29 @@
+---
+id: front-end-getting-started
+title: Getting started with Vue.js front end development
+category: Category
+status: code
+published: 2019-08-30 12:00
+preview: >
+  This post will share how I got started building static front end websites for my projects like Haohaotiantian, Magic: Card Finder, and Neko Atsume API Docs using JavaScript, Vue.js, and Bootstrap.
+---
+
+This post will share how I got started building static front end websites for my projects like [Haohaotiantian](https://haohaotiantian.com), [Magic: Card Finder](https://mtg.emshea.com), and [Neko Atsume API Docs](https://neko-atsume.emshea.com/) using JavaScript, Vue.js, and Bootstrap. 
+
+##### Jump to:
+
+- Vue.js - Getting to know views, components, data flows
+- CSS frameworks - Bootstrap & Vuetify
+- Static web hosting with S3 and CloudFront
+
+---
+
+### Section 1
+
+Body
+
+---
+
+Relevant links
+
+🌻

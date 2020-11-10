@@ -5,10 +5,10 @@ category: Code
 status: published
 published: 2020-07-23 12:00
 preview: >
-  Over the past two years, I've learned the basics of Python and Javascript in order to develop web applications in my free time. In this post, I'm going to share the resources and tips that worked for me while learning to code.
+  Over the past two years, I've learned the basics of Python and JavaScript in order to develop web applications in my free time. In this post, I'm going to share the resources and tips that worked for me while learning to code.
 ---
 
-Over the past two years, I've learned the basics of Python and Javascript in order to develop web applications in my free time. I didn't have a background in technology before this, and it's been a time investment and an interesting challenge. There's plenty more I'd like to learn, but I'm happy with how far I've come and what I'm able to build today.
+Over the past two years, I've learned the basics of Python and JavaScript in order to develop web applications in my free time. I didn't have a background in technology before this, and it's been a time investment and an interesting challenge. There's plenty more I'd like to learn, but I'm happy with how far I've come and what I'm able to build today.
 
 In this post, I'm going to share the resources and tips that worked for me while learning to code.
 
@@ -41,7 +41,7 @@ If you're looking to build personal projects, there's a chance you may be able t
 
 [Python](https://www.python.org/) has served me well as a first programming language and is often recommended as a good one to start with. It's an easy and intuitive language to learn and is a good foundation to learn other languages from. Even cooler, it's used in a variety of different fields. Python is great for everything from automating tasks on your computer and building website backends, to advanced work with AI/ML and IoT technologies.
 
-After spending a few months learning and writing Python, I started in on [JavaScript](https://www.javascript.com/). Another popular language, JavaScript allows you to build dynamic web frontends (i.e., when someone clicks a button on your website, something happens on the backend). I confess, there's plenty of concepts in JavaScript I'm still working on grasping. I've found it trickier than Python, but very useful and an area I want to keep improving in.
+After spending a few months learning and writing Python, I started in on [JavaScript](https://www.javaScript.com/). Another popular language, JavaScript allows you to build dynamic web frontends (i.e., when someone clicks a button on your website, something happens on the backend). I confess, there's plenty of concepts in JavaScript I'm still working on grasping. I've found it trickier than Python, but very useful and an area I want to keep improving in.
 
 If you want to compare more languages and when you might choose them, [this infographic](http://carlcheo.com/wp-content/uploads/2014/12/which-programming-language-should-i-learn-first-infographic.png) is fun.
 
