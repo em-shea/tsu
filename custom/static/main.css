@@ -10,6 +10,7 @@ a.color:hover,
 .nav-header a:hover,
 .post-wrapper .view-post:hover {
   color: #9bcf71;
+  text-decoration: underline;
 }
 
 code {
